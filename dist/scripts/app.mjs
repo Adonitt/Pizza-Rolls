@@ -16,6 +16,7 @@ let cart = [];
 let selectedCategory = 'pizza';
 let activeProduct = null;
 let productQuantity = 1;
+let cartToastTimer;
 
 function saveCart() {
   try { localStorage.setItem('rolls-cart-v1', JSON.stringify(cart)); } catch {}
@@ -27,6 +28,14 @@ function readCart() {
 
 function showDialog(dialog) {
   if (!dialog.open) dialog.showModal();
+}
+
+function showCartToast(productName) {
+  const toast = $('#cartToast');
+  toast.textContent = `${productName} u shtua në shportë. Vazhdo me menynë ose hape shportën kur të jesh gati.`;
+  toast.hidden = false;
+  clearTimeout(cartToastTimer);
+  cartToastTimer = setTimeout(() => { toast.hidden = true; }, 3500);
 }
 
 function categoryName(id) {
@@ -58,6 +67,7 @@ function renderBusiness() {
     : 'Orari po konfirmohet';
   $('#zone').innerHTML = '<option value="">Zgjedh zonën</option>' + (business.deliveryZones || [])
     .map((zone) => `<option value="${safe(zone.id)}">${safe(zone.name)} — ${zone.feeCents === 0 ? 'Falas' : money(zone.feeCents)}</option>`).join('');
+  $('#zoneField').hidden = !(business.deliveryZones || []).length;
   renderStatus();
 }
 
@@ -73,7 +83,7 @@ function renderStatus() {
   const enabled = canOrder(business, menu);
   $('#sendOrder').disabled = !enabled || cart.length === 0;
   $('#sendOrder').innerHTML = enabled
-    ? 'Hap porosinë në WhatsApp <span aria-hidden="true">↗</span>'
+    ? 'Dërgo porosinë në WhatsApp <span aria-hidden="true">↗</span>'
     : 'Porositë online nuk janë aktive';
 }
 
@@ -87,13 +97,15 @@ function renderMenu() {
     const prices = (product.variants || []).map((variant) => Number(variant.priceCents));
     const from = prices.length ? Math.min(...prices) : Number(product.priceCents || 0);
     const image = product.image?.startsWith('./assets/') ? `<div class="menu-card-image"><img src="${safe(product.image)}" alt="" loading="lazy"></div>` : '';
+    const priceList = prices.length ? `<div class="card-prices" aria-label="Çmimet sipas madhësisë">${product.variants.map((variant) =>
+      `<span><small>${safe(variant.name)}</small><strong>${money(variant.priceCents)}</strong></span>`).join('')}</div>` : '';
     return `<article class="menu-card">
       ${image}<div class="menu-card-content">
-        <p class="menu-card-category">${safe(categoryName(product.categoryId))}</p>
-        <h3>${safe(product.name)}</h3>
+        <div class="menu-card-title"><div><p class="menu-card-category">${safe(categoryName(product.categoryId))}</p><h3>${safe(product.name)}</h3></div><span class="card-number">${String(visible.indexOf(product) + 1).padStart(2, '0')}</span></div>
         <p class="menu-card-description">${safe(product.description || '')}</p>
+        ${priceList}
         <div class="menu-card-bottom"><strong>${prices.length ? 'Nga ' : ''}${money(from)}</strong>
-          <button type="button" data-product="${safe(product.id)}" aria-label="Zgjedh ${safe(product.name)}">+</button></div>
+          <button type="button" data-product="${safe(product.id)}" aria-label="Zgjedh ${safe(product.name)}"><span>Shto</span> +</button></div>
       </div></article>`;
   }).join('');
   $('#emptyMenu').hidden = products.length > 0;
@@ -167,7 +179,7 @@ function updateTotals() {
   const totals = calculateTotals(cart, menu, method, zoneId, business.deliveryZones);
   $('#deliveryFields').hidden = method !== 'delivery';
   $('#deliveryRow').hidden = method !== 'delivery';
-  $('#zone').required = method === 'delivery';
+  $('#zone').required = method === 'delivery' && (business.deliveryZones || []).length > 0;
   $('#address').required = method === 'delivery';
   $('#subtotal').textContent = money(totals.subtotalCents);
   $('#deliveryFee').textContent = totals.validZone ? (totals.deliveryCents === 0 ? 'Falas' : money(totals.deliveryCents)) : 'Zgjedh zonën';
@@ -214,7 +226,7 @@ function bindEvents() {
     cart = normalizeCart([...cart, { productId: activeProduct.id, variantId, extraIds, instructions, quantity: productQuantity }], menu);
     $('#productDialog').close();
     renderCart();
-    showDialog($('#cartDialog'));
+    showCartToast(activeProduct.name);
   });
   $('#cartItems').addEventListener('click', (event) => {
     const button = event.target.closest('[data-cart-action]');

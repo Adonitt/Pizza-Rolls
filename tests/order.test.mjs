@@ -78,3 +78,17 @@ test('checkout validates customer and zone then builds a readable WhatsApp draft
   assert.equal(new URL(url).pathname, '/38349378379');
   assert.equal(new URL(url).searchParams.get('text'), message);
 });
+
+test('delivery without configured zones stays free and is confirmed by staff', () => {
+  const cart = normalizeCart([{ productId: 'margarita', variantId: '30', quantity: 1 }], menu);
+  const noZonesBusiness = { ...business, deliveryZones: [] };
+  const payload = {
+    cart, menu, business: noZonesBusiness, method: 'delivery', zoneId: '', name: 'Arta',
+    phone: '049 123 456', address: 'Podujevë, afër qendrës', notes: '', date: openTime
+  };
+  assert.deepEqual(validateCheckout(payload), {});
+  const totals = calculateTotals(cart, menu, 'delivery', '', []);
+  assert.equal(totals.validZone, true);
+  assert.equal(totals.deliveryCents, 0);
+  assert.match(buildWhatsAppMessage(payload), /Dërgesa \(adresa konfirmohet nga stafi\): Falas/);
+});

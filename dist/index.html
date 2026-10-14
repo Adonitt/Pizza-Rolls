@@ -107,6 +107,7 @@
 
   <footer class="site-footer"><div class="shell footer-inner"><span class="footer-wordmark">ROLLS<span>®</span></span><p>Pizza & Coffee • Podujevë</p><a href="#krye">Lart ↑</a></div></footer>
 
+  <div class="cart-toast" id="cartToast" role="status" aria-live="polite" hidden></div>
   <button class="mobile-cart" id="mobileCart" type="button"><span>Shporta <b id="mobileCartCount">0</b></span><span id="mobileCartTotal">0,00 € <span aria-hidden="true">↗</span></span></button>
 
   <dialog class="product-dialog" id="productDialog" aria-labelledby="productTitle">
@@ -118,13 +119,13 @@
       <div class="dialog-head"><div><p class="section-kicker">POROSIA JOTE</p><h2 id="cartTitle">Shporta</h2></div><button type="button" class="icon-close" id="closeCart" aria-label="Mbyll shportën">×</button></div>
       <div class="cart-scroll"><div id="cartItems"></div><form id="checkoutForm" novalidate>
         <fieldset class="method-fieldset"><legend>Si dëshiron ta marrësh?</legend><label><input type="radio" name="method" value="delivery" checked><span>Dërgesë</span></label><label><input type="radio" name="method" value="pickup"><span>Marrje në lokal</span></label></fieldset>
-        <div id="deliveryFields"><label for="zone">Zona e dërgesës</label><select id="zone" name="zone" required><option value="">Zgjedh zonën</option></select><label for="address">Adresa e plotë</label><input id="address" name="address" autocomplete="street-address" placeholder="Rruga, numri, pika orientuese" required></div>
+        <div id="deliveryFields"><div id="zoneField"><label for="zone">Zona e dërgesës</label><select id="zone" name="zone"><option value="">Zgjedh zonën</option></select></div><label for="address">Adresa e plotë</label><input id="address" name="address" autocomplete="street-address" placeholder="Rruga, numri, pika orientuese" required><p class="delivery-coverage">Dërgesa është falas. Stafi e konfirmon mbulimin e adresës në WhatsApp.</p></div>
         <div class="field-pair"><div><label for="customerName">Emri</label><input id="customerName" name="name" autocomplete="name" required></div><div><label for="customerPhone">Telefoni</label><input id="customerPhone" name="phone" autocomplete="tel" inputmode="tel" required></div></div>
         <label for="notes">Shënime për porosinë <span class="optional">(opsionale)</span></label><textarea id="notes" name="notes" rows="2" placeholder="P.sh. pa qepë, hyrja e ndërtesës..."></textarea>
         <div class="totals"><div><span>Nëntotali</span><strong id="subtotal">0,00 €</strong></div><div id="deliveryRow"><span>Dërgesa</span><strong id="deliveryFee">Zgjedh zonën</strong></div><div class="grand-total"><span>Totali</span><strong id="grandTotal">0,00 €</strong></div></div>
         <p class="payment-note">Pagesa bëhet në dorëzim ose marrje. Dërgimi në WhatsApp nuk e konfirmon automatikisht porosinë.</p>
         <p id="checkoutError" class="form-error" role="alert" hidden></p>
-        <button id="sendOrder" class="button button-red send-order" type="submit" disabled>Hap porosinë në WhatsApp <span aria-hidden="true">↗</span></button>
+        <button id="sendOrder" class="button button-red send-order" type="submit" disabled>Dërgo porosinë në WhatsApp <span aria-hidden="true">↗</span></button>
         <p class="send-hint">Në WhatsApp shtyp “Dërgo” dhe prit konfirmimin nga stafi.</p>
       </form></div>
     </div>

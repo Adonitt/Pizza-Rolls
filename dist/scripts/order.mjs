@@ -58,14 +58,15 @@ export function calculateTotals(cart, menu, method, zoneId, deliveryZones = []) 
   const lines = cartDetails(cart, menu);
   const subtotalCents = lines.reduce((sum, line) => sum + line.totalPriceCents, 0);
   const zone = method === 'delivery' ? deliveryZones.find((entry) => entry.id === zoneId) : null;
+  const zonesConfigured = deliveryZones.length > 0;
   const deliveryCents = zone ? Number(zone.feeCents || 0) : 0;
   return {
     lines,
     subtotalCents,
     deliveryCents,
     totalCents: subtotalCents + deliveryCents,
-    validZone: method === 'pickup' || Boolean(zone),
-    zoneName: zone?.name || ''
+    validZone: method === 'pickup' || !zonesConfigured || Boolean(zone),
+    zoneName: zone?.name || (!zonesConfigured && method === 'delivery' ? 'adresa konfirmohet nga stafi' : '')
   };
 }
 
@@ -123,7 +124,7 @@ export function validateCheckout({ cart, menu, business, method, zoneId, name, p
   if (!/^\+?[0-9\s()-]{7,20}$/.test(String(phone || '').trim())) errors.phone = 'Shkruaj një numër telefoni të vlefshëm.';
   if (!['delivery', 'pickup'].includes(method)) errors.method = 'Zgjedh mënyrën e marrjes.';
   if (method === 'delivery') {
-    if (!business.deliveryZones?.some((zone) => zone.id === zoneId)) errors.zone = 'Zgjedh zonën e dërgesës.';
+    if (business.deliveryZones?.length && !business.deliveryZones.some((zone) => zone.id === zoneId)) errors.zone = 'Zgjedh zonën e dërgesës.';
     if (!String(address || '').trim()) errors.address = 'Shkruaj adresën e plotë.';
   }
   return errors;
@@ -140,7 +141,7 @@ export function buildWhatsAppMessage({ cart, menu, business, method, zoneId, nam
     }),
     '',
     `Nëntotali: ${formatPrice(totals.subtotalCents)}`,
-    method === 'delivery' ? `Dërgesa (${totals.zoneName}): ${formatPrice(totals.deliveryCents)}` : 'Marrje në lokal',
+    method === 'delivery' ? `Dërgesa (${totals.zoneName}): ${totals.deliveryCents === 0 ? 'Falas' : formatPrice(totals.deliveryCents)}` : 'Marrje në lokal',
     `Totali: ${formatPrice(totals.totalCents)}`,
     '',
     `Emri: ${String(name).trim()}`,
