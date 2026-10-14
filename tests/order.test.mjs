@@ -4,9 +4,9 @@ import { readFileSync } from 'node:fs';
 import {
   normalizeCart, calculateTotals, isWithinHours, canOrder, validateCheckout,
   buildWhatsAppMessage, buildWhatsAppUrl
-} from '../dist/scripts/order.mjs';
+} from '../src/lib/order.js';
 
-const menu = JSON.parse(readFileSync(new URL('../dist/data/menu.json', import.meta.url), 'utf8'));
+const menu = JSON.parse(readFileSync(new URL('../src/data/menu.json', import.meta.url), 'utf8'));
 const business = {
   name: 'Rolls Pizza & Coffee',
   phoneInternational: '38349378379',

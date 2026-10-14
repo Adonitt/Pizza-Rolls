@@ -1,17 +1,32 @@
 # Rolls Pizza & Coffee
 
-Faqe statike në shqip për menynë dhe porositë përmes WhatsApp. Nuk ruan porosi në server dhe nuk ka panel administrimi ose pagesë online.
+Website në shqip për Rolls Pizza & Coffee në Podujevë, ndërtuar me React dhe Vite. Klienti zgjedh produktet, përgatit porosinë për dërgesë ose marrje në lokal dhe e dërgon si mesazh të paraplotësuar në WhatsApp.
 
-## Përmbajtja
+## Teknologjitë
 
-- `dist/data/menu.json`: kategoritë dhe produktet. Çmimet shkruhen në centë (`250` = 2,50 €). Çdo pizzë ka katër madhësi në `variants`; sanduiçët, pijet dhe salcat kanë `priceCents`.
-- `dist/data/business.json`: numri, koordinatat e lokalit, orari, zonat e dërgesës dhe çelësi `orderingEnabled`. Ditët janë 0 = e diel deri 6 = e shtunë; orari 10:00–02:00 kalon mesnatën. Për dërgesë falas, çdo zonë ka `feeCents: 0`.
-- `dist/assets/rolls-logo.jpg`: logoja e dërguar nga përdoruesi. `menu-original.png` është fotoja e menusë për krahasim.
+- React 19 për komponentët dhe gjendjen e shportës
+- Vite për zhvillim dhe build
+- CSS i personalizuar për dizajnin responsive
+- JavaScript modules për totalet, orarin, validimin dhe WhatsApp
+- JSON për menynë dhe të dhënat e biznesit
 
-Porositë aktivizohen vetëm kur `orderingEnabled` është `true`, produktet ekzistojnë dhe ora aktuale bie brenda orarit. Lokacioni në hartë përdor koordinatat e dhëna nga pizzeria; adresa tekstuale mund të shtohet më vonë. Para aktivizimit, plotëso zonat reale të dërgesës, pastaj verifiko të dhënat e menusë me pizzerinë. Për mbyllje të përkohshme përdor `orderingEnabled: false` ose shto datën te `specialClosures` në formatin YYYY-MM-DD, pastaj publiko sërish.
+## Skedarët kryesorë
 
-Klienti e përgatit porosinë në faqe. Dërgimi bëhet vetëm pasi ai shtyp “Dërgo” në WhatsApp; stafi e konfirmon atje. Shporta ruhet vetëm në shfletuesin e klientit.
+- `src/App.jsx`: ndërfaqja React dhe komponentët e faqes
+- `src/data/menu.json`: kategoritë, produktet dhe çmimet në centë
+- `src/data/business.json`: telefoni, lokacioni, orari dhe zonat e dërgesës
+- `src/lib/order.js`: logjika e shportës, validimi dhe mesazhi WhatsApp
+- `src/styles.css`: dizajni i plotë responsive
+- `public/assets`: logoja, menyja origjinale dhe favicon
 
-## Kontroll lokal
+## Komandat
 
-Nga folderi `site`: `node --test tests/*.test.mjs`. Për ta parë faqen, shërbe `dist` me një server lokal HTTP; hapja direkte si skedar nuk e ngarkon JSON-in.
+```bash
+npm install
+npm run dev
+npm test
+npm run build
+npm run preview
+```
+
+Build-i i publikueshëm krijohet në `dist`. Shporta ruhet vetëm në shfletuesin e klientit; faqja nuk ka server, panel administrimi ose pagesë online.

@@ -1,0 +1,140 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import menu from './data/menu.json';
+import business from './data/business.json';
+import {
+  buildWhatsAppMessage, buildWhatsAppUrl, calculateTotals, canOrder,
+  cartDetails, formatPrice, normalizeCart, validateCheckout
+} from './lib/order.js';
+
+const dayNames = ['E diel', 'E hënë', 'E martë', 'E mërkurë', 'E enjte', 'E premte', 'E shtunë'];
+
+function loadCart() {
+  try { return normalizeCart(JSON.parse(localStorage.getItem('rolls-cart-v1') || '[]'), menu); }
+  catch { return []; }
+}
+
+function Header({ count, onOpenCart }) {
+  return <header className="site-header"><div className="shell header-inner">
+    <a className="brand" href="#krye" aria-label="Rolls Pizza & Coffee, kthehu në fillim"><span className="brand-stamp" aria-hidden="true">R</span><span className="brand-copy"><strong>ROLLS</strong><small>PIZZA & COFFEE</small></span></a>
+    <nav className="desktop-nav" aria-label="Navigimi kryesor"><a href="#menu">Menuja</a><a href="#si-funksionon">Si funksionon</a><a href="#na-gjej">Na gjej</a></nav>
+    <div className="header-actions"><a className="phone-link" href={`tel:+${business.phoneInternational}`}>Na thirr</a><button className="header-cart" type="button" aria-label="Hap shportën" onClick={onOpenCart}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.3a2 2 0 0 0 2 1.7H19a2 2 0 0 0 2-1.6L22 8H6M10 20h.01M18 20h.01" /></svg><span>Shporta</span><b>{count}</b></button></div>
+  </div></header>;
+}
+
+function Hero() {
+  const open = canOrder(business, menu);
+  const ready = business.orderingEnabled && menu.products.some((product) => product.available !== false);
+  return <section className="hero" id="krye">
+    <div className="hero-noise" aria-hidden="true" />
+    <div className="shell hero-layout">
+      <div className="hero-copy"><p className="eyebrow"><span className="eyebrow-line" /> PODUJEVË • PIZZA & COFFEE</p><h1>Një kafshatë,<br /><em>edhe një.</em></h1><p className="hero-intro">Hape menynë, zgjidh çka të pëlqen dhe përgatite porosinë për dërgesë ose marrje në lokal. Dërgesa është falas në zonat që i mbulojmë.</p><div className="hero-cta"><a className="button button-red" href="#menu">Shiko menynë <span aria-hidden="true">↗</span></a><a className="text-link" href="#na-gjej">Ku na gjen <span aria-hidden="true">↗</span></a></div><div className={`hero-status ${open ? 'open' : ''}`} role="status" aria-live="polite"><span className="status-dot" /><span>{!ready ? 'Porositë online aktivizohen së shpejti' : open ? 'Hapur për porosi' : 'Mbyllur për porosi — shiko orarin më poshtë'}</span></div></div>
+      <div className="hero-visual"><div className="orbit orbit-one" aria-hidden="true" /><div className="orbit orbit-two" aria-hidden="true" /><span className="hero-side-note" aria-hidden="true">ROLLS / PODUJEVË / PIZZA & COFFEE</span><div className="logo-plate"><img src="/assets/rolls-logo.jpg" alt="Logoja zyrtare e Pizza Rolls Coffee" width="960" height="960" /></div><div className="hero-seal" aria-hidden="true"><span>01</span><small>Shije<br />për çdo ditë</small></div></div>
+    </div>
+    <div className="ticker" aria-hidden="true"><div className="ticker-track">PIZZA <span>✦</span> COFFEE <span>✦</span> PODUJEVË <span>✦</span> ROLLS <span>✦</span> PIZZA <span>✦</span> COFFEE <span>✦</span> PODUJEVË <span>✦</span> ROLLS <span>✦</span></div></div>
+  </section>;
+}
+
+function MenuSection({ onChoose }) {
+  const firstCategory = menu.categories.find((category) => menu.products.some((product) => product.categoryId === category.id))?.id;
+  const [selectedCategory, setSelectedCategory] = useState(firstCategory || 'pizza');
+  const products = menu.products.filter((product) => product.available !== false);
+  const visible = products.filter((product) => product.categoryId === selectedCategory);
+  const categoryName = (id) => menu.categories.find((category) => category.id === id)?.name || id;
+  return <section className="menu-section section-pad" id="menu"><div className="shell">
+    <div className="section-heading"><div><p className="section-kicker">01 / MENYJA</p><h2>Çka të hahet <em>sot?</em></h2></div><p>Çdo produkt veçmas, me përbërës dhe çmime të qarta. Zgjedh madhësinë e pizzës, pastaj dërgo porosinë në WhatsApp.</p></div>
+    <a className="source-menu-link" href="/assets/menu-original.png" target="_blank" rel="noreferrer">Shiko menynë origjinale <span aria-hidden="true">↗</span></a>
+    <div className="menu-controls" aria-label="Kategoritë e menysë">{menu.categories.map((category) => { const count = products.filter((product) => product.categoryId === category.id).length; return count > 0 && <button key={category.id} type="button" className={`category-pill ${category.id === selectedCategory ? 'active' : ''}`} aria-pressed={category.id === selectedCategory} onClick={() => setSelectedCategory(category.id)}>{category.name} <span>{count}</span></button>; })}</div>
+    <div className="menu-grid" aria-live="polite">{visible.map((product, index) => {
+      const prices = (product.variants || []).map((variant) => Number(variant.priceCents));
+      const from = prices.length ? Math.min(...prices) : Number(product.priceCents || 0);
+      return <article className="menu-card" key={product.id}><div className="menu-card-content"><div className="menu-card-title"><div><p className="menu-card-category">{categoryName(product.categoryId)}</p><h3>{product.name}</h3></div><span className="card-number">{String(index + 1).padStart(2, '0')}</span></div><p className="menu-card-description">{product.description || ''}</p>{prices.length > 0 && <div className="card-prices" aria-label="Çmimet sipas madhësisë">{product.variants.map((variant) => <span key={variant.id}><small>{variant.name}</small><strong>{formatPrice(variant.priceCents)}</strong></span>)}</div>}<div className="menu-card-bottom"><strong>{prices.length ? 'Nga ' : ''}{formatPrice(from)}</strong><button type="button" onClick={() => onChoose(product)} aria-label={`Zgjedh ${product.name}`}><span>Shto</span> +</button></div></div></article>;
+    })}</div>
+  </div></section>;
+}
+
+function ProductDialog({ product, onClose, onAdd }) {
+  const ref = useRef(null);
+  const [variantId, setVariantId] = useState('');
+  const [extraIds, setExtraIds] = useState([]);
+  const [instructions, setInstructions] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  useEffect(() => {
+    if (!product) return;
+    setVariantId(product.variants?.[0]?.id || ''); setExtraIds([]); setInstructions(''); setQuantity(1);
+    if (!ref.current.open) ref.current.showModal();
+  }, [product]);
+  if (!product) return null;
+  const variant = product.variants?.find((item) => item.id === variantId);
+  const extrasPrice = (product.extras || []).filter((item) => extraIds.includes(item.id)).reduce((sum, item) => sum + Number(item.priceCents || 0), 0);
+  const price = (Number(variant?.priceCents ?? product.priceCents ?? 0) + extrasPrice) * quantity;
+  const submit = (event) => {
+    event.preventDefault();
+    if (product.requiresInstructions && !instructions.trim()) return;
+    onAdd({ productId: product.id, variantId: product.variants?.length ? variantId : null, extraIds, instructions: instructions.trim(), quantity });
+    ref.current.close(); onClose();
+  };
+  return <dialog className="product-dialog" ref={ref} onClose={onClose}><form onSubmit={submit}>
+    <div className="dialog-head"><p className="section-kicker">SHTO NË SHPORTË</p><button type="button" className="icon-close" aria-label="Mbyll" onClick={() => ref.current.close()}>×</button></div><h2>{product.name}</h2><p>{product.description || ''}</p>
+    {product.variants?.length > 0 && <fieldset className="choice-group"><legend>Madhësia</legend>{product.variants.map((item) => <label className="choice-option" key={item.id}><span><input type="radio" name="variant" value={item.id} checked={variantId === item.id} onChange={() => setVariantId(item.id)} /> {item.name}</span><strong>{formatPrice(item.priceCents)}</strong></label>)}</fieldset>}
+    {product.extras?.length > 0 && <fieldset className="choice-group"><legend>Shtesat</legend>{product.extras.map((item) => <label className="choice-option" key={item.id}><span><input type="checkbox" checked={extraIds.includes(item.id)} onChange={() => setExtraIds((ids) => ids.includes(item.id) ? ids.filter((id) => id !== item.id) : [...ids, item.id])} /> {item.name}</span><strong>+{formatPrice(item.priceCents)}</strong></label>)}</fieldset>}
+    {product.requiresInstructions && <><label className="custom-label" htmlFor="productInstructions">Përbërësit që dëshiron</label><textarea id="productInstructions" rows="3" value={instructions} onChange={(event) => setInstructions(event.target.value)} required placeholder="Shkruaj përbërësit e preferuar" /></>}
+    <div className="quantity-control"><span>Sasia</span><div><button type="button" aria-label="Ule sasinë" onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><output>{quantity}</output><button type="button" aria-label="Rrite sasinë" onClick={() => setQuantity((value) => Math.min(20, value + 1))}>+</button></div></div><button className="button button-red dialog-add" type="submit">Shto në shportë <span>{formatPrice(price)}</span></button>
+  </form></dialog>;
+}
+
+function CartDialog({ open, cart, onClose, onChangeCart }) {
+  const ref = useRef(null);
+  const [method, setMethod] = useState('delivery');
+  const [form, setForm] = useState({ zoneId: '', name: '', phone: '', address: '', notes: '' });
+  const [error, setError] = useState('');
+  const lines = useMemo(() => cartDetails(cart, menu), [cart]);
+  const totals = useMemo(() => calculateTotals(cart, menu, method, form.zoneId, business.deliveryZones), [cart, method, form.zoneId]);
+  useEffect(() => { if (open && !ref.current.open) ref.current.showModal(); if (!open && ref.current?.open) ref.current.close(); }, [open]);
+  const update = (index, quantity) => {
+    const next = cart.map((item, itemIndex) => itemIndex === index ? { ...item, quantity } : item);
+    onChangeCart(normalizeCart(quantity <= 0 ? next.filter((_, itemIndex) => itemIndex !== index) : next, menu));
+  };
+  const submit = (event) => {
+    event.preventDefault();
+    const payload = { cart, menu, business, method, zoneId: form.zoneId, name: form.name, phone: form.phone, address: form.address, notes: form.notes };
+    const errors = validateCheckout(payload);
+    if (Object.keys(errors).length) { setError(Object.values(errors)[0]); return; }
+    setError(''); window.location.assign(buildWhatsAppUrl(business.phoneInternational, buildWhatsAppMessage(payload)));
+  };
+  const orderOpen = canOrder(business, menu);
+  return <dialog className="cart-dialog" ref={ref} onClose={onClose}><div className="cart-panel">
+    <div className="dialog-head"><div><p className="section-kicker">POROSIA JOTE</p><h2>Shporta</h2></div><button type="button" className="icon-close" aria-label="Mbyll shportën" onClick={() => ref.current.close()}>×</button></div>
+    <div className="cart-scroll">{!lines.length ? <div className="cart-empty">Shporta është e zbrazët. Zgjedh produktet nga menuja dhe kthehu këtu kur të jesh gati.</div> : lines.map((line, index) => <div className="cart-line" key={`${line.productId}-${line.variantId}-${line.instructions}-${index}`}><div><h3>{line.name}</h3><small>{[line.variantName, ...line.extraNames, line.instructions].filter(Boolean).join(', ')}</small><strong>{formatPrice(line.totalPriceCents)}</strong></div><div className="cart-line-actions"><button type="button" aria-label="Ule sasinë" onClick={() => update(index, line.quantity - 1)}>−</button><span>{line.quantity}</span><button type="button" aria-label="Rrite sasinë" onClick={() => update(index, Math.min(20, line.quantity + 1))}>+</button><button type="button" className="remove-line" onClick={() => update(index, 0)}>Hiqe</button></div></div>)}
+      <form id="checkoutForm" noValidate onSubmit={submit}><fieldset className="method-fieldset"><legend>Si dëshiron ta marrësh?</legend><label><input type="radio" name="method" value="delivery" checked={method === 'delivery'} onChange={() => setMethod('delivery')} /><span>Dërgesë</span></label><label><input type="radio" name="method" value="pickup" checked={method === 'pickup'} onChange={() => setMethod('pickup')} /><span>Marrje në lokal</span></label></fieldset>
+        {method === 'delivery' && <div>{business.deliveryZones.length > 0 && <div><label htmlFor="zone">Zona e dërgesës</label><select id="zone" value={form.zoneId} onChange={(event) => setForm({ ...form, zoneId: event.target.value })}><option value="">Zgjedh zonën</option>{business.deliveryZones.map((zone) => <option value={zone.id} key={zone.id}>{zone.name} — {zone.feeCents === 0 ? 'Falas' : formatPrice(zone.feeCents)}</option>)}</select></div>}<label htmlFor="address">Adresa e plotë</label><input id="address" autoComplete="street-address" placeholder="Rruga, numri, pika orientuese" value={form.address} onChange={(event) => setForm({ ...form, address: event.target.value })} required /><p className="delivery-coverage">Dërgesa është falas. Stafi e konfirmon mbulimin e adresës në WhatsApp.</p></div>}
+        <div className="field-pair"><div><label htmlFor="customerName">Emri</label><input id="customerName" autoComplete="name" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required /></div><div><label htmlFor="customerPhone">Telefoni</label><input id="customerPhone" autoComplete="tel" inputMode="tel" value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} required /></div></div>
+        <label htmlFor="notes">Shënime për porosinë <span className="optional">(opsionale)</span></label><textarea id="notes" rows="2" placeholder="P.sh. pa qepë, hyrja e ndërtesës..." value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} />
+        <div className="totals"><div><span>Nëntotali</span><strong>{formatPrice(totals.subtotalCents)}</strong></div>{method === 'delivery' && <div><span>Dërgesa</span><strong>{totals.validZone ? (totals.deliveryCents === 0 ? 'Falas' : formatPrice(totals.deliveryCents)) : 'Zgjedh zonën'}</strong></div>}<div className="grand-total"><span>Totali</span><strong>{formatPrice(totals.totalCents)}</strong></div></div>
+        <p className="payment-note">Pagesa bëhet në dorëzim ose marrje. Dërgimi në WhatsApp nuk e konfirmon automatikisht porosinë.</p>{error && <p className="form-error" role="alert">{error}</p>}<button className="button button-red send-order" type="submit" disabled={!orderOpen || !lines.length}>{orderOpen ? 'Dërgo porosinë në WhatsApp' : 'Porositë online nuk janë aktive'} <span aria-hidden="true">↗</span></button><p className="send-hint">Në WhatsApp shtyp “Dërgo” dhe prit konfirmimin nga stafi.</p>
+      </form>
+    </div>
+  </div></dialog>;
+}
+
+function ProcessSection() {
+  const steps = [['Zgjedh', 'Shto në shportë produktet që dëshiron dhe kontrollo shumën.'], ['Vendos', 'Zgjedh dërgesë falas në zonat e mbuluara ose marrje në lokal.'], ['Konfirmo', 'Dërgo mesazhin në WhatsApp dhe prit përgjigjen e stafit me kohën e përgatitjes.']];
+  return <section className="process-section section-pad" id="si-funksionon"><div className="shell process-layout"><div className="process-lead"><p className="section-kicker">02 / POROSIA</p><h2>E thjeshtë,<br /><em>si duhet.</em></h2><p>Porosia përgatitet në faqe dhe konfirmohet nga stafi ynë në WhatsApp.</p></div><div className="steps">{steps.map(([title, text], index) => <article className="step" key={title}><span>0{index + 1}</span><div><h3>{title}</h3><p>{text}</p></div><b aria-hidden="true">↗</b></article>)}</div></div></section>;
+}
+
+function VisitSection() {
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${business.location.latitude},${business.location.longitude}`)}`;
+  return <section className="visit-section section-pad" id="na-gjej"><div className="shell visit-layout"><div className="visit-copy"><p className="section-kicker">03 / NA GJEJ</p><h2>Na gjen në <em>Podujevë.</em></h2><p>Hape hartën për ta parë pikën e saktë të lokalit, ose na telefono për udhëzime.</p><a className="button button-dark" href={mapUrl} target="_blank" rel="noreferrer">Hape hartën <span aria-hidden="true">↗</span></a></div><div className="visit-card"><div className="card-top"><span>ROLLS / PIZZA & COFFEE</span><span aria-hidden="true">✳</span></div><div className="info-row"><small>LOKACIONI</small><strong>{business.address || 'Pika e saktë në hartë'}</strong></div><div className="info-row"><small>TELEFONI</small><a href={`tel:+${business.phoneInternational}`}>{business.phoneDisplay}</a></div><div className="info-row"><small>ORARI</small><div>{dayNames.map((day, index) => { const slots = business.hours.filter((slot) => slot.day === index); return <div className="hours-day" key={day}><span>{day}</span><span>{slots.map((slot) => `${slot.open}–${slot.close}`).join(', ') || 'Mbyllur'}</span></div>; })}</div></div><div className="visit-card-bottom"><a href={`https://wa.me/${business.phoneInternational}`} target="_blank" rel="noreferrer">Na shkruaj në WhatsApp <span aria-hidden="true">↗</span></a></div></div></div></section>;
+}
+
+export default function App() {
+  const [cart, setCart] = useState(loadCart);
+  const [activeProduct, setActiveProduct] = useState(null);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [toast, setToast] = useState('');
+  const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const total = calculateTotals(cart, menu, 'pickup', '', business.deliveryZones).totalCents;
+  useEffect(() => { try { localStorage.setItem('rolls-cart-v1', JSON.stringify(cart)); } catch {} }, [cart]);
+  useEffect(() => { if (!toast) return undefined; const timer = setTimeout(() => setToast(''), 3500); return () => clearTimeout(timer); }, [toast]);
+  const add = (item) => { const product = menu.products.find((entry) => entry.id === item.productId); setCart((current) => normalizeCart([...current, item], menu)); setToast(`${product.name} u shtua në shportë. Vazhdo me menynë ose hape shportën kur të jesh gati.`); };
+  return <><a className="skip-link" href="#menu">Kalo te menuja</a><Header count={count} onOpenCart={() => setCartOpen(true)} /><main><Hero /><MenuSection onChoose={setActiveProduct} /><ProcessSection /><VisitSection /></main><footer className="site-footer"><div className="shell footer-inner"><span className="footer-wordmark">ROLLS<span>®</span></span><p>Pizza & Coffee • Podujevë</p><a href="#krye">Lart ↑</a></div></footer>{toast && <div className="cart-toast" role="status" aria-live="polite">{toast}</div>}<button className="mobile-cart" type="button" onClick={() => setCartOpen(true)}><span>Shporta <b>{count}</b></span><span>{formatPrice(total)} <span aria-hidden="true">↗</span></span></button><ProductDialog product={activeProduct} onClose={() => setActiveProduct(null)} onAdd={add} /><CartDialog open={cartOpen} cart={cart} onClose={() => setCartOpen(false)} onChangeCart={setCart} /></>;
+}
