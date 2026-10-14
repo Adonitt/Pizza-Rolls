@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="sq">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071712">
+  <meta name="description" content="Rolls Pizza & Coffee në Podujevë. Shfleto menynë dhe përgatit porosinë për dërgesë ose marrje në lokal.">
+  <title>Rolls Pizza & Coffee — Podujevë</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="./assets/rolls-logo.jpg" as="image">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./scripts/app.mjs"></script>
+</head>
+<body>
+  <a class="skip-link" href="#menu">Kalo te menuja</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="#krye" aria-label="Rolls Pizza & Coffee, kthehu në fillim">
+        <span class="brand-stamp" aria-hidden="true">R</span>
+        <span class="brand-copy"><strong>ROLLS</strong><small>PIZZA & COFFEE</small></span>
+      </a>
+      <nav class="desktop-nav" aria-label="Navigimi kryesor">
+        <a href="#menu">Menuja</a>
+        <a href="#si-funksionon">Si funksionon</a>
+        <a href="#na-gjej">Na gjej</a>
+      </nav>
+      <div class="header-actions">
+        <a class="phone-link" id="headerPhone" href="tel:+38349378379">Na thirr</a>
+        <button class="header-cart" id="openCart" type="button" aria-label="Hap shportën">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.3a2 2 0 0 0 2 1.7H19a2 2 0 0 0 2-1.6L22 8H6M10 20h.01M18 20h.01"/></svg>
+          <span>Shporta</span><b id="cartCount">0</b>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="krye">
+      <div class="hero-noise" aria-hidden="true"></div>
+      <div class="shell hero-layout">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> PODUJEVË • PIZZA & COFFEE</p>
+          <h1>Një kafshatë,<br><em>edhe një.</em></h1>
+          <p class="hero-intro">Hape menynë, zgjidh çka të pëlqen dhe përgatite porosinë për dërgesë ose marrje në lokal. Dërgesa është falas në zonat që i mbulojmë.</p>
+          <div class="hero-cta">
+            <a class="button button-red" href="#menu">Shiko menynë <span aria-hidden="true">↗</span></a>
+            <a class="text-link" href="#na-gjej">Ku na gjen <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="hero-status" id="storeStatus" role="status" aria-live="polite">
+            <span class="status-dot"></span><span>Orari i porosive po konfirmohet</span>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="orbit orbit-one" aria-hidden="true"></div>
+          <div class="orbit orbit-two" aria-hidden="true"></div>
+          <span class="hero-side-note" aria-hidden="true">ROLLS / PODUJEVË / PIZZA & COFFEE</span>
+          <div class="logo-plate">
+            <img src="./assets/rolls-logo.jpg" alt="Logoja zyrtare e Pizza Rolls Coffee" width="960" height="960">
+          </div>
+          <div class="hero-seal" aria-hidden="true"><span>01</span><small>Shije<br>për çdo ditë</small></div>
+        </div>
+      </div>
+      <div class="ticker" aria-hidden="true"><div class="ticker-track">PIZZA <span>✦</span> COFFEE <span>✦</span> PODUJEVË <span>✦</span> ROLLS <span>✦</span> PIZZA <span>✦</span> COFFEE <span>✦</span> PODUJEVË <span>✦</span> ROLLS <span>✦</span></div></div>
+    </section>
+
+    <section class="menu-section section-pad" id="menu">
+      <div class="shell">
+        <div class="section-heading">
+          <div><p class="section-kicker">01 / MENYJA</p><h2>Çka të hahet <em>sot?</em></h2></div>
+          <p>Çdo produkt veçmas, me përbërës dhe çmime të qarta. Zgjedh madhësinë e pizzës, pastaj dërgo porosinë në WhatsApp.</p>
+        </div>
+        <a class="source-menu-link" href="./assets/menu-original.png" target="_blank" rel="noopener noreferrer">Shiko menynë origjinale <span aria-hidden="true">↗</span></a>
+        <div class="menu-controls" id="categoryList" aria-label="Kategoritë e menysë"></div>
+        <div class="menu-grid" id="menuGrid" aria-live="polite"></div>
+        <div class="empty-menu" id="emptyMenu">
+          <span class="empty-icon" aria-hidden="true">✳</span>
+          <div><p class="section-kicker">SË SHPEJTI</p><h3>Menuja po plotësohet.</h3><p>Produktet dhe çmimet do të shfaqen këtu sapo të konfirmohen. Ndërkohë, mund të na kontaktosh drejtpërdrejt.</p></div>
+          <a class="button button-outline" id="emptyPhone" href="tel:+38349378379">Na thirr <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="process-section section-pad" id="si-funksionon">
+      <div class="shell process-layout">
+        <div class="process-lead"><p class="section-kicker">02 / POROSIA</p><h2>E thjeshtë,<br><em>si duhet.</em></h2><p>Porosia përgatitet në faqe dhe konfirmohet nga stafi ynë në WhatsApp.</p></div>
+        <div class="steps">
+          <article class="step"><span>01</span><div><h3>Zgjedh</h3><p>Shto në shportë produktet që dëshiron dhe kontrollo shumën.</p></div><b aria-hidden="true">↗</b></article>
+          <article class="step"><span>02</span><div><h3>Vendos</h3><p>Zgjedh dërgesë falas në zonat e mbuluara ose marrje në lokal.</p></div><b aria-hidden="true">↗</b></article>
+          <article class="step"><span>03</span><div><h3>Konfirmo</h3><p>Dërgo mesazhin në WhatsApp dhe prit përgjigjen e stafit me kohën e përgatitjes.</p></div><b aria-hidden="true">↗</b></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="visit-section section-pad" id="na-gjej">
+      <div class="shell visit-layout">
+        <div class="visit-copy"><p class="section-kicker">03 / NA GJEJ</p><h2>Na gjen në <em>Podujevë.</em></h2><p>Na telefono ose na shkruaj në WhatsApp. Adresën e saktë do ta shtojmë sapo të konfirmohet.</p><a class="button button-dark" id="mapLink" href="#" target="_blank" rel="noopener noreferrer" hidden>Hape hartën <span aria-hidden="true">↗</span></a></div>
+        <div class="visit-card">
+          <div class="card-top"><span>ROLLS / PIZZA & COFFEE</span><span aria-hidden="true">✳</span></div>
+          <div class="info-row"><small>ADRESA</small><strong id="addressText">Adresa e saktë po konfirmohet</strong></div>
+          <div class="info-row"><small>TELEFONI</small><a id="phoneText" href="tel:+38349378379">+383 49 378 379</a></div>
+          <div class="info-row"><small>ORARI</small><div id="hoursList">Orari po konfirmohet</div></div>
+          <div class="visit-card-bottom"><a id="contactWhatsapp" href="https://wa.me/38349378379" target="_blank" rel="noopener noreferrer">Na shkruaj në WhatsApp <span aria-hidden="true">↗</span></a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="shell footer-inner"><span class="footer-wordmark">ROLLS<span>®</span></span><p>Pizza & Coffee • Podujevë</p><a href="#krye">Lart ↑</a></div></footer>
+
+  <button class="mobile-cart" id="mobileCart" type="button"><span>Shporta <b id="mobileCartCount">0</b></span><span id="mobileCartTotal">0,00 € <span aria-hidden="true">↗</span></span></button>
+
+  <dialog class="product-dialog" id="productDialog" aria-labelledby="productTitle">
+    <form id="productForm" method="dialog"><div class="dialog-head"><p class="section-kicker">SHTO NË SHPORTË</p><button type="button" class="icon-close" id="closeProduct" aria-label="Mbyll">×</button></div><h2 id="productTitle"></h2><p id="productDescription"></p><div id="productChoices"></div><div class="quantity-control"><span>Sasia</span><div><button type="button" id="productMinus" aria-label="Ule sasinë">−</button><output id="productQuantity">1</output><button type="button" id="productPlus" aria-label="Rrite sasinë">+</button></div></div><button class="button button-red dialog-add" type="submit">Shto në shportë <span id="productPrice"></span></button></form>
+  </dialog>
+
+  <dialog class="cart-dialog" id="cartDialog" aria-labelledby="cartTitle">
+    <div class="cart-panel">
+      <div class="dialog-head"><div><p class="section-kicker">POROSIA JOTE</p><h2 id="cartTitle">Shporta</h2></div><button type="button" class="icon-close" id="closeCart" aria-label="Mbyll shportën">×</button></div>
+      <div class="cart-scroll"><div id="cartItems"></div><form id="checkoutForm" novalidate>
+        <fieldset class="method-fieldset"><legend>Si dëshiron ta marrësh?</legend><label><input type="radio" name="method" value="delivery" checked><span>Dërgesë</span></label><label><input type="radio" name="method" value="pickup"><span>Marrje në lokal</span></label></fieldset>
+        <div id="deliveryFields"><label for="zone">Zona e dërgesës</label><select id="zone" name="zone" required><option value="">Zgjedh zonën</option></select><label for="address">Adresa e plotë</label><input id="address" name="address" autocomplete="street-address" placeholder="Rruga, numri, pika orientuese" required></div>
+        <div class="field-pair"><div><label for="customerName">Emri</label><input id="customerName" name="name" autocomplete="name" required></div><div><label for="customerPhone">Telefoni</label><input id="customerPhone" name="phone" autocomplete="tel" inputmode="tel" required></div></div>
+        <label for="notes">Shënime për porosinë <span class="optional">(opsionale)</span></label><textarea id="notes" name="notes" rows="2" placeholder="P.sh. pa qepë, hyrja e ndërtesës..."></textarea>
+        <div class="totals"><div><span>Nëntotali</span><strong id="subtotal">0,00 €</strong></div><div id="deliveryRow"><span>Dërgesa</span><strong id="deliveryFee">Zgjedh zonën</strong></div><div class="grand-total"><span>Totali</span><strong id="grandTotal">0,00 €</strong></div></div>
+        <p class="payment-note">Pagesa bëhet në dorëzim ose marrje. Dërgimi në WhatsApp nuk e konfirmon automatikisht porosinë.</p>
+        <p id="checkoutError" class="form-error" role="alert" hidden></p>
+        <button id="sendOrder" class="button button-red send-order" type="submit" disabled>Hap porosinë në WhatsApp <span aria-hidden="true">↗</span></button>
+        <p class="send-hint">Në WhatsApp shtyp “Dërgo” dhe prit konfirmimin nga stafi.</p>
+      </form></div>
+    </div>
+  </dialog>
+  <noscript><div class="noscript">Për të përdorur menynë dhe shportën, aktivizo JavaScript. Mund të porosisësh edhe me telefon në <a href="tel:+38349378379">+383 49 378 379</a>.</div></noscript>
+</body>
+</html>
