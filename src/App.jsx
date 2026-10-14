@@ -16,7 +16,7 @@ function loadCart() {
 
 function Header({ count, onOpenCart }) {
   return <header className="site-header"><div className="shell header-inner">
-    <a className="brand" href="#krye" aria-label="Rolls Pizza & Coffee, kthehu në fillim"><span className="brand-stamp" aria-hidden="true">R</span><span className="brand-copy"><strong>ROLLS</strong><small>PIZZA & COFFEE</small></span></a>
+    <a className="brand" href="#krye" aria-label="Rolls Pizza & Coffee, kthehu në fillim"><img className="brand-stamp" src="/assets/rolls-logo.jpg" alt="" width="44" height="44" /><span className="brand-copy"><strong>ROLLS</strong><small>PIZZA & COFFEE</small></span></a>
     <nav className="desktop-nav" aria-label="Navigimi kryesor"><a href="#menu">Menuja</a><a href="#si-funksionon">Si funksionon</a><a href="#na-gjej">Na gjej</a></nav>
     <div className="header-actions"><a className="phone-link" href={`tel:+${business.phoneInternational}`}>Na thirr</a><button className="header-cart" type="button" aria-label="Hap shportën" onClick={onOpenCart}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.3a2 2 0 0 0 2 1.7H19a2 2 0 0 0 2-1.6L22 8H6M10 20h.01M18 20h.01" /></svg><span>Shporta</span><b>{count}</b></button></div>
   </div></header>;
