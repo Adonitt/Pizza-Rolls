@@ -86,7 +86,7 @@ function ProductDialog({ product, onClose, onAdd }) {
 function CartDialog({ open, cart, onClose, onChangeCart }) {
   const ref = useRef(null);
   const [method, setMethod] = useState('delivery');
-  const [form, setForm] = useState({ zoneId: '', name: '', phone: '', address: '', notes: '' });
+  const [form, setForm] = useState({ zoneId: '', name: '', phone: '', address: '', notes: '', contactPreference: 'whatsapp' });
   const [error, setError] = useState('');
   const lines = useMemo(() => cartDetails(cart, menu), [cart]);
   const totals = useMemo(() => calculateTotals(cart, menu, method, form.zoneId, business.deliveryZones), [cart, method, form.zoneId]);
@@ -97,7 +97,7 @@ function CartDialog({ open, cart, onClose, onChangeCart }) {
   };
   const submit = (event) => {
     event.preventDefault();
-    const payload = { cart, menu, business, method, zoneId: form.zoneId, name: form.name, phone: form.phone, address: form.address, notes: form.notes };
+    const payload = { cart, menu, business, method, zoneId: form.zoneId, name: form.name, phone: form.phone, address: form.address, notes: form.notes, contactPreference: form.contactPreference };
     const errors = validateCheckout(payload);
     if (Object.keys(errors).length) { setError(Object.values(errors)[0]); return; }
     setError(''); window.location.assign(buildWhatsAppUrl(business.phoneInternational, buildWhatsAppMessage(payload)));
@@ -109,9 +109,10 @@ function CartDialog({ open, cart, onClose, onChangeCart }) {
       <form id="checkoutForm" noValidate onSubmit={submit}><fieldset className="method-fieldset"><legend>Si dëshiron ta marrësh?</legend><label><input type="radio" name="method" value="delivery" checked={method === 'delivery'} onChange={() => setMethod('delivery')} /><span>Dërgesë</span></label><label><input type="radio" name="method" value="pickup" checked={method === 'pickup'} onChange={() => setMethod('pickup')} /><span>Marrje në lokal</span></label></fieldset>
         {method === 'delivery' && <div>{business.deliveryZones.length > 0 && <div><label htmlFor="zone">Zona e dërgesës</label><select id="zone" value={form.zoneId} onChange={(event) => setForm({ ...form, zoneId: event.target.value })}><option value="">Zgjedh zonën</option>{business.deliveryZones.map((zone) => <option value={zone.id} key={zone.id}>{zone.name} — {zone.feeCents === 0 ? 'Falas' : formatPrice(zone.feeCents)}</option>)}</select></div>}<label htmlFor="address">Adresa e plotë</label><input id="address" autoComplete="street-address" placeholder="Rruga, numri, pika orientuese" value={form.address} onChange={(event) => setForm({ ...form, address: event.target.value })} required /><p className="delivery-coverage">Dërgesa është falas. Stafi e konfirmon mbulimin e adresës në WhatsApp.</p></div>}
         <div className="field-pair"><div><label htmlFor="customerName">Emri</label><input id="customerName" autoComplete="name" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required /></div><div><label htmlFor="customerPhone">Telefoni</label><input id="customerPhone" autoComplete="tel" inputMode="tel" value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} required /></div></div>
+        <fieldset className="method-fieldset contact-method"><legend>Si dëshiron të të kontaktojmë?</legend><label><input type="radio" name="contactPreference" value="whatsapp" checked={form.contactPreference === 'whatsapp'} onChange={() => setForm({ ...form, contactPreference: 'whatsapp' })} /><span>WhatsApp</span></label><label><input type="radio" name="contactPreference" value="call" checked={form.contactPreference === 'call'} onChange={() => setForm({ ...form, contactPreference: 'call' })} /><span>Më telefononi</span></label></fieldset>
         <label htmlFor="notes">Shënime për porosinë <span className="optional">(opsionale)</span></label><textarea id="notes" rows="2" placeholder="P.sh. pa qepë, hyrja e ndërtesës..." value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} />
         <div className="totals"><div><span>Nëntotali</span><strong>{formatPrice(totals.subtotalCents)}</strong></div>{method === 'delivery' && <div><span>Dërgesa</span><strong>{totals.validZone ? (totals.deliveryCents === 0 ? 'Falas' : formatPrice(totals.deliveryCents)) : 'Zgjedh zonën'}</strong></div>}<div className="grand-total"><span>Totali</span><strong>{formatPrice(totals.totalCents)}</strong></div></div>
-        <p className="payment-note">Pagesa bëhet në dorëzim ose marrje. Dërgimi në WhatsApp nuk e konfirmon automatikisht porosinë.</p>{error && <p className="form-error" role="alert">{error}</p>}<button className="button button-red send-order" type="submit" disabled={!orderOpen || !lines.length}>{orderOpen ? 'Dërgo porosinë në WhatsApp' : 'Mbyllur — hapet në 10:00'} <span aria-hidden="true">↗</span></button><p className="send-hint">Në WhatsApp shtyp “Dërgo” dhe prit konfirmimin nga stafi.</p>
+        <p className="payment-note">Pagesa bëhet në dorëzim ose marrje. Dërgimi në WhatsApp nuk e konfirmon automatikisht porosinë.</p>{error && <p className="form-error" role="alert">{error}</p>}<button className="button button-red send-order" type="submit" disabled={!orderOpen || !lines.length}>{orderOpen ? 'Dërgo kërkesën në WhatsApp' : 'Mbyllur — hapet në 10:00'} <span aria-hidden="true">↗</span></button><p className="send-hint">Shtyp “Dërgo” në WhatsApp. Nëse zgjodhe telefonatë, stafi do të të thërrasë në numrin e shënuar.</p>
       </form>
     </div>
   </div></dialog>;

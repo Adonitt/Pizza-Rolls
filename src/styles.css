@@ -25,3 +25,4 @@
 .dialog-add-label{line-height:1.2}.dialog-add-price{line-height:1.2}
 .button .dialog-add-label{font-size:12px;line-height:1.2}
 @media(max-width:420px){.button .dialog-add-label{font-size:10px}}
+.contact-method{margin-top:19px;padding-top:13px;border-top:1px solid var(--line)}
