@@ -2,6 +2,7 @@
   "name": "Rolls Pizza & Coffee",
   "city": "Podujevë",
   "address": "",
+  "location": { "latitude": 42.90409621852567, "longitude": 21.19393161231008 },
   "phoneDisplay": "+383 49 378 379",
   "phoneInternational": "38349378379",
   "timezone": "Europe/Belgrade",

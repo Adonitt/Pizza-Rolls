@@ -40,9 +40,14 @@ function renderBusiness() {
   $('#emptyPhone').href = telephone;
   $('#phoneText').href = telephone;
   $('#phoneText').textContent = business.phoneDisplay;
-  $('#addressText').textContent = business.address || 'Adresa e saktë po konfirmohet';
-  $('#mapLink').hidden = !business.address;
-  if (business.address) $('#mapLink').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address)}`;
+  const latitude = business.location?.latitude;
+  const longitude = business.location?.longitude;
+  const hasCoordinates = Number.isFinite(latitude) && Number.isFinite(longitude)
+    && Math.abs(latitude) <= 90 && Math.abs(longitude) <= 180;
+  const mapQuery = hasCoordinates ? `${latitude},${longitude}` : business.address;
+  $('#addressText').textContent = business.address || (hasCoordinates ? 'Pika e saktë në hartë' : 'Lokacioni po konfirmohet');
+  $('#mapLink').hidden = !mapQuery;
+  if (mapQuery) $('#mapLink').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
   $('#contactWhatsapp').href = `https://wa.me/${business.phoneInternational}`;
   const slots = Array.isArray(business.hours) ? business.hours : [];
   $('#hoursList').innerHTML = slots.length
