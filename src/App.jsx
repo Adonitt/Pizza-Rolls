@@ -7,6 +7,7 @@ import {
 } from './lib/order.js';
 
 const dayNames = ['E diel', 'E hënë', 'E martë', 'E mërkurë', 'E enjte', 'E premte', 'E shtunë'];
+const sizeDescriptions = { mini: 'E vogël', '30': 'E mesme · 1 person', '40': 'Për 2 persona', '60': 'Familjare' };
 
 function loadCart() {
   try { return normalizeCart(JSON.parse(localStorage.getItem('rolls-cart-v1') || '[]'), menu); }
@@ -43,6 +44,7 @@ function MenuSection({ onChoose }) {
   return <section className="menu-section section-pad" id="menu"><div className="shell">
     <div className="section-heading"><div><p className="section-kicker">01 / MENYJA</p><h2>Çka të hahet <em>sot?</em></h2></div><p>Çdo produkt veçmas, me përbërës dhe çmime të qarta. Zgjedh madhësinë e pizzës, pastaj dërgo porosinë në WhatsApp.</p></div>
     <a className="source-menu-link" href="/assets/menu-original.png" target="_blank" rel="noreferrer">Shiko menynë origjinale <span aria-hidden="true">↗</span></a>
+    <p className="size-guide"><strong>Madhësitë e pizzës:</strong> Mini – e vogël · 30 cm – e mesme për 1 person · 40 cm – për 2 persona · 60 cm – familjare.</p>
     <div className="menu-controls" aria-label="Kategoritë e menysë">{menu.categories.map((category) => { const count = products.filter((product) => product.categoryId === category.id).length; return count > 0 && <button key={category.id} type="button" className={`category-pill ${category.id === selectedCategory ? 'active' : ''}`} aria-pressed={category.id === selectedCategory} onClick={() => setSelectedCategory(category.id)}>{category.name} <span>{count}</span></button>; })}</div>
     <div className="menu-grid" aria-live="polite">{visible.map((product, index) => {
       const prices = (product.variants || []).map((variant) => Number(variant.priceCents));
@@ -75,10 +77,10 @@ function ProductDialog({ product, onClose, onAdd }) {
   };
   return <dialog className="product-dialog" ref={ref} onClose={onClose}><form onSubmit={submit}>
     <div className="dialog-head"><p className="section-kicker">SHTO NË SHPORTË</p><button type="button" className="icon-close" aria-label="Mbyll" onClick={() => ref.current.close()}>×</button></div><h2>{product.name}</h2><p>{product.description || ''}</p>
-    {product.variants?.length > 0 && <fieldset className="choice-group"><legend>Madhësia</legend>{product.variants.map((item) => <label className="choice-option" key={item.id}><span><input type="radio" name="variant" value={item.id} checked={variantId === item.id} onChange={() => setVariantId(item.id)} /> {item.name}</span><strong>{formatPrice(item.priceCents)}</strong></label>)}</fieldset>}
-    {product.extras?.length > 0 && <fieldset className="choice-group"><legend>Shtesat</legend>{product.extras.map((item) => <label className="choice-option" key={item.id}><span><input type="checkbox" checked={extraIds.includes(item.id)} onChange={() => setExtraIds((ids) => ids.includes(item.id) ? ids.filter((id) => id !== item.id) : [...ids, item.id])} /> {item.name}</span><strong>+{formatPrice(item.priceCents)}</strong></label>)}</fieldset>}
+    {product.variants?.length > 0 && <fieldset className="choice-group"><legend>Madhësia e pizzës</legend>{product.variants.map((item) => <label className={`choice-option ${variantId === item.id ? 'selected' : ''}`} key={item.id}><span><input type="radio" name="variant" value={item.id} checked={variantId === item.id} onChange={() => setVariantId(item.id)} /> <span><b>{item.name}</b><small>{sizeDescriptions[item.id]}</small></span></span><strong>{formatPrice(item.priceCents)}</strong></label>)}</fieldset>}
+    {product.extras?.length > 0 && <fieldset className="choice-group"><legend>Shtesat</legend>{product.extras.map((item) => <label className={`choice-option ${extraIds.includes(item.id) ? 'selected' : ''}`} key={item.id}><span><input type="checkbox" checked={extraIds.includes(item.id)} onChange={() => setExtraIds((ids) => ids.includes(item.id) ? ids.filter((id) => id !== item.id) : [...ids, item.id])} /> <b>{item.name}</b></span><strong>+{formatPrice(item.priceCents)}</strong></label>)}</fieldset>}
     {product.requiresInstructions && <><label className="custom-label" htmlFor="productInstructions">Përbërësit që dëshiron</label><textarea id="productInstructions" rows="3" value={instructions} onChange={(event) => setInstructions(event.target.value)} required placeholder="Shkruaj përbërësit e preferuar" /></>}
-    <div className="quantity-control"><span>Sasia</span><div><button type="button" aria-label="Ule sasinë" onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><output>{quantity}</output><button type="button" aria-label="Rrite sasinë" onClick={() => setQuantity((value) => Math.min(20, value + 1))}>+</button></div></div><button className="button button-red dialog-add" type="submit">Shto në shportë <span>{formatPrice(price)}</span></button>
+    <div className="quantity-control"><span>Sasia</span><div><button type="button" aria-label="Ule sasinë" onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><output>{quantity}</output><button type="button" aria-label="Rrite sasinë" onClick={() => setQuantity((value) => Math.min(20, value + 1))}>+</button></div></div><button className="button button-red dialog-add" type="submit"><span className="dialog-add-label">Shto në shportë</span><strong className="dialog-add-price">{formatPrice(price)}</strong><span className="dialog-add-arrow" aria-hidden="true">↗</span></button>
   </form></dialog>;
 }
 
