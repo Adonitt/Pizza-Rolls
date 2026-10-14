@@ -124,14 +124,13 @@ export function canOrder(business, menu, date = new Date()) {
     && isWithinHours(business, date);
 }
 
-export function validateCheckout({ cart, menu, business, method, zoneId, name, phone, address, contactPreference = 'whatsapp', date = new Date() }) {
+export function validateCheckout({ cart, menu, business, method, zoneId, name, phone, address, date = new Date() }) {
   const errors = {};
   if (!canOrder(business, menu, date)) errors.order = 'Porositë nuk pranohen për momentin.';
   if (!cartDetails(cart, menu).length) errors.cart = 'Shto të paktën një produkt në shportë.';
   if (!String(name || '').trim()) errors.name = 'Shkruaj emrin.';
   if (!/^\+?[0-9\s()-]{7,20}$/.test(String(phone || '').trim())) errors.phone = 'Shkruaj një numër telefoni të vlefshëm.';
   if (!['delivery', 'pickup'].includes(method)) errors.method = 'Zgjedh mënyrën e marrjes.';
-  if (!['whatsapp', 'call'].includes(contactPreference)) errors.contactPreference = 'Zgjedh mënyrën e kontaktit.';
   if (method === 'delivery') {
     if (business.deliveryZones?.length && !business.deliveryZones.some((zone) => zone.id === zoneId)) errors.zone = 'Zgjedh zonën e dërgesës.';
     if (!String(address || '').trim()) errors.address = 'Shkruaj adresën e plotë.';
@@ -139,7 +138,7 @@ export function validateCheckout({ cart, menu, business, method, zoneId, name, p
   return errors;
 }
 
-export function buildWhatsAppMessage({ cart, menu, business, method, zoneId, name, phone, address, notes, contactPreference = 'whatsapp' }) {
+export function buildWhatsAppMessage({ cart, menu, business, method, zoneId, name, phone, address, notes }) {
   const totals = calculateTotals(cart, menu, method, zoneId, business.deliveryZones);
   const rows = [
     `Përshëndetje ${business.name}, dua të porosis:`,
@@ -154,8 +153,7 @@ export function buildWhatsAppMessage({ cart, menu, business, method, zoneId, nam
     `Totali: ${formatPrice(totals.totalCents)}`,
     '',
     `Emri: ${String(name).trim()}`,
-    `Telefoni: ${String(phone).trim()}`,
-    `Preferenca e kontaktit: ${contactPreference === 'call' ? 'Telefonatë — ju lutem më telefononi për konfirmim' : 'WhatsApp'}`
+    `Telefoni: ${String(phone).trim()}`
   ];
   if (method === 'delivery') rows.push(`Adresa: ${String(address).trim()}`);
   if (String(notes || '').trim()) rows.push(`Shënime: ${String(notes).trim()}`);
