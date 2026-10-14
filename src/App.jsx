@@ -128,6 +128,19 @@ function VisitSection() {
   return <section className="visit-section section-pad" id="na-gjej"><div className="shell visit-layout"><div className="visit-copy"><p className="section-kicker">03 / NA GJEJ</p><h2>Na gjen në <em>Podujevë.</em></h2><p>Hape hartën për ta parë pikën e saktë të lokalit, ose na telefono për udhëzime.</p><a className="button button-dark" href={mapUrl} target="_blank" rel="noreferrer">Hape hartën <span aria-hidden="true">↗</span></a></div><div className="visit-card"><div className="card-top"><span>ROLLS / PIZZA & COFFEE</span><span aria-hidden="true">✳</span></div><div className="info-row"><small>LOKACIONI</small><strong>{business.address || 'Pika e saktë në hartë'}</strong></div><div className="info-row"><small>TELEFONI</small><a href={`tel:+${business.phoneInternational}`}>{business.phoneDisplay}</a></div><div className="info-row"><small>ORARI</small><div>{dayNames.map((day, index) => { const slots = business.hours.filter((slot) => slot.day === index); return <div className="hours-day" key={day}><span>{day}</span><span>{slots.map((slot) => `${slot.open}–${slot.close}`).join(', ') || 'Mbyllur'}</span></div>; })}</div></div><div className="visit-card-bottom"><a href={`https://wa.me/${business.phoneInternational}`} target="_blank" rel="noreferrer">Na shkruaj në WhatsApp <span aria-hidden="true">↗</span></a></div></div></div></section>;
 }
 
+function Footer() {
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${business.location.latitude},${business.location.longitude}`)}`;
+  return <footer className="site-footer">
+    <img className="footer-watermark" src="/assets/rolls-logo.jpg" alt="" aria-hidden="true" />
+    <div className="shell footer-layout">
+      <div className="footer-brand-block"><a className="footer-brand" href="#krye" aria-label="Rolls Pizza & Coffee, kthehu në fillim"><img src="/assets/rolls-logo.jpg" alt="Logoja e Rolls Pizza & Coffee" width="72" height="72" /><span><strong>ROLLS</strong><small>PIZZA & COFFEE</small></span></a><p>Pica të përgatitura me kujdes dhe kafe për çdo moment. Na vizito në Podujevë ose porosit për dërgesë falas në zonat që mbulojmë.</p></div>
+      <div className="footer-column"><h2>Shfleto</h2><a href="#menu">Menuja</a><a href="#si-funksionon">Si bëhet porosia</a><a href="#na-gjej">Na gjej</a><a href="#krye">Kthehu në fillim ↑</a></div>
+      <div className="footer-column footer-contact"><h2>Na kontakto</h2><a href={`tel:+${business.phoneInternational}`}>{business.phoneDisplay}</a><a href={`https://wa.me/${business.phoneInternational}`} target="_blank" rel="noreferrer">Na shkruaj në WhatsApp ↗</a><a href={mapUrl} target="_blank" rel="noreferrer">Hape lokacionin në Google Maps ↗</a><p>Çdo ditë · 10:00–02:00</p></div>
+    </div>
+    <div className="shell footer-bottom"><span>© {new Date().getFullYear()} Rolls Pizza & Coffee</span><span>Podujevë, Kosovë</span></div>
+  </footer>;
+}
+
 export default function App() {
   const [cart, setCart] = useState(loadCart);
   const [activeProduct, setActiveProduct] = useState(null);
@@ -138,5 +151,5 @@ export default function App() {
   useEffect(() => { try { localStorage.setItem('rolls-cart-v1', JSON.stringify(cart)); } catch {} }, [cart]);
   useEffect(() => { if (!toast) return undefined; const timer = setTimeout(() => setToast(''), 3500); return () => clearTimeout(timer); }, [toast]);
   const add = (item) => { const product = menu.products.find((entry) => entry.id === item.productId); setCart((current) => normalizeCart([...current, item], menu)); setToast(`${product.name} u shtua në shportë. Vazhdo me menynë ose hape shportën kur të jesh gati.`); };
-  return <><a className="skip-link" href="#menu">Kalo te menuja</a><Header count={count} onOpenCart={() => setCartOpen(true)} /><main><Hero /><MenuSection onChoose={setActiveProduct} /><ProcessSection /><VisitSection /></main><footer className="site-footer"><div className="shell footer-inner"><span className="footer-wordmark">ROLLS<span>®</span></span><p>Pizza & Coffee • Podujevë</p><a href="#krye">Lart ↑</a></div></footer>{toast && <div className="cart-toast" role="status" aria-live="polite">{toast}</div>}<button className="mobile-cart" type="button" onClick={() => setCartOpen(true)}><span>Shporta <b>{count}</b></span><span>{formatPrice(total)} <span aria-hidden="true">↗</span></span></button><ProductDialog product={activeProduct} onClose={() => setActiveProduct(null)} onAdd={add} /><CartDialog open={cartOpen} cart={cart} onClose={() => setCartOpen(false)} onChangeCart={setCart} /></>;
+  return <><a className="skip-link" href="#menu">Kalo te menuja</a><Header count={count} onOpenCart={() => setCartOpen(true)} /><main><Hero /><MenuSection onChoose={setActiveProduct} /><ProcessSection /><VisitSection /></main><Footer />{toast && <div className="cart-toast" role="status" aria-live="polite">{toast}</div>}<button className="mobile-cart" type="button" onClick={() => setCartOpen(true)}><span>Shporta <b>{count}</b></span><span>{formatPrice(total)} <span aria-hidden="true">↗</span></span></button><ProductDialog product={activeProduct} onClose={() => setActiveProduct(null)} onAdd={add} /><CartDialog open={cartOpen} cart={cart} onClose={() => setCartOpen(false)} onChangeCart={setCart} /></>;
 }
