@@ -38,6 +38,7 @@ test('cart calculates sizes, separate sauces, and free covered delivery', () => 
   assert.equal(totals.deliveryCents, 0);
   assert.equal(totals.totalCents, 1800);
   assert.equal(totals.validZone, true);
+  assert.equal(totals.lines[0].name, 'Pizza Margarita');
   assert.equal(calculateTotals(cart, menu, 'delivery', 'other', business.deliveryZones).validZone, false);
   assert.equal(calculateTotals(cart, menu, 'pickup', '', business.deliveryZones).deliveryCents, 0);
 });
@@ -77,6 +78,24 @@ test('checkout validates customer and zone then builds a readable WhatsApp draft
   assert.equal(new URL(url).hostname, 'wa.me');
   assert.equal(new URL(url).pathname, '/38349378379');
   assert.equal(new URL(url).searchParams.get('text'), message);
+});
+
+test('cart and WhatsApp label products clearly by category', () => {
+  const cart = normalizeCart([
+    { productId: 'tuna-pizza', variantId: '30', quantity: 1 },
+    { productId: 'rolls', variantId: 'mini', quantity: 1 },
+    { productId: 'sandwich-tuna', quantity: 1 }
+  ], menu);
+  const lines = calculateTotals(cart, menu, 'pickup', '', []).lines;
+  assert.deepEqual(lines.map((line) => [line.name, line.variantName]), [
+    ['Pizza Tuna', '30 cm'],
+    ['Pizza Rolls', 'Mini'],
+    ['Sanduiç Tuna', '']
+  ]);
+  const message = buildWhatsAppMessage({ cart, menu, business, method: 'pickup', zoneId: '', name: 'Arta', phone: '049 123 456', address: '', notes: '' });
+  assert.match(message, /Pizza Tuna \(30 cm\)/);
+  assert.match(message, /Pizza Rolls \(Mini\)/);
+  assert.match(message, /Sanduiç Tuna/);
 });
 
 test('delivery without configured zones stays free and is confirmed by staff', () => {

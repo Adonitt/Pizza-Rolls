@@ -8,6 +8,14 @@ export function getProduct(menu, id) {
   return menu?.products?.find((product) => product.id === id && product.available !== false);
 }
 
+function orderProductName(product) {
+  const name = String(product?.name || '').trim();
+  const normalizedName = name.toLocaleLowerCase('sq');
+  if (product?.categoryId === 'pizza' && !normalizedName.startsWith('pizza ')) return `Pizza ${name}`;
+  if (product?.categoryId === 'sandwich' && !normalizedName.startsWith('sanduiç ')) return `Sanduiç ${name}`;
+  return name;
+}
+
 export function normalizeCart(value, menu) {
   if (!Array.isArray(value)) return [];
   const merged = new Map();
@@ -45,7 +53,7 @@ export function cartDetails(cart, menu) {
       + extras.reduce((sum, extra) => sum + Number(extra.priceCents || 0), 0);
     return {
       ...item,
-      name: product.name,
+      name: orderProductName(product),
       variantName: variant?.name || '',
       extraNames: extras.map((extra) => extra.name),
       unitPriceCents,
