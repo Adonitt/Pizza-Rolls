@@ -18,6 +18,7 @@ const drinkImageFiles = {
   'fanta-exotic': 'fanta-exotic.webp',
   'fanta-orange': 'fanta-orange.webp',
   'ice-tea': 'ice-tea.webp',
+  dredhez: 'dredhez.webp',
   pjeshke: 'pjeshke.webp',
   portokall: 'portokall.webp',
   'red-bull': 'red-bull.webp',
