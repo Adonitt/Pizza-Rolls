@@ -90,6 +90,9 @@
 #checkoutForm textarea{min-height:86px;line-height:1.5;resize:vertical}
 #checkoutForm select{appearance:none;padding-right:42px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23004d40' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
 #checkoutForm>div>label,#checkoutForm>.field-pair label,#checkoutForm>label{color:#55584f;font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+.checkout-accuracy-note{display:flex;align-items:flex-start;gap:10px;margin:18px 0 4px;padding:13px 14px;border:1px solid #e5bd85;border-radius:12px;background:#fff6e8;color:#59401d;font-size:12px;line-height:1.5}
+.checkout-accuracy-note>span:first-child{display:grid;place-items:center;flex:0 0 21px;width:21px;height:21px;border-radius:50%;background:var(--red);color:#fff;font-size:13px;font-weight:900;line-height:1}
+.checkout-accuracy-note strong{display:block;margin-bottom:2px;color:#372a1c}
 .method-fieldset label span{min-height:52px;justify-content:flex-start;gap:10px;padding:12px 14px;border-radius:12px;transition:background .18s,border-color .18s,color .18s}
 .method-fieldset label span:before{content:"";width:18px;height:18px;flex:0 0 18px;border:1px solid #aaa294;border-radius:50%;background:#fff}
 .method-fieldset input:checked+span{background:#eaf2ed;color:var(--pine-dark);border-color:var(--pine)}
