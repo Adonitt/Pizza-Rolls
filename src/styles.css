@@ -30,7 +30,7 @@
 .pizza-placeholder-plate{position:relative;width:76px;height:76px;border:1px solid #f4efe55c;border-radius:50%;box-shadow:0 0 0 7px #f4efe510,inset 0 0 0 5px #f4efe510}
 .pizza-placeholder-plate:before,.pizza-placeholder-plate:after{content:"";position:absolute;left:50%;top:50%;width:1px;height:20px;background:#f4efe555;transform-origin:50% 0}
 .pizza-placeholder-plate:before{transform:rotate(45deg)}.pizza-placeholder-plate:after{transform:rotate(135deg)}
-.pizza-image-badge{position:absolute;z-index:2;top:24px;left:24px;padding:7px 9px;background:#071712c9;color:#f4efe5;font-size:8px;font-weight:800;letter-spacing:.16em}
+.pizza-image-badge{position:absolute;z-index:2;top:24px;left:24px;padding:7px 9px;background:#071712c9;color:#f4efe5;font-size:8px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
 .menu-card-pizza .menu-card-image img{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
 .menu-card-pizza:hover .menu-card-image img{transform:scale(1.02)}
 @media(max-width:700px){.menu-card-pizza .menu-card-image{height:205px}}
@@ -72,3 +72,13 @@
 .method-fieldset label span:before{content:"";width:18px;height:18px;flex:0 0 18px;border:1px solid #aaa294;border-radius:50%;background:#fff}
 .method-fieldset input:checked+span{background:#eaf2ed;color:var(--pine-dark);border-color:var(--pine)}
 .method-fieldset input:checked+span:before{border-color:var(--pine);background:radial-gradient(circle,var(--pine) 0 4px,#fff 4.5px)}
+
+
+.menu-card-drink .menu-card-image{position:relative;height:190px;background:radial-gradient(ellipse at 50% 55%,#1b6655 0,#0b3b31 55%,#06231e 100%);isolation:isolate}.drink-image-placeholder{position:absolute;inset:12px;display:grid;place-items:center;border:1px solid #f4efe533;color:#f4efe54a;font-size:9px;font-weight:800;letter-spacing:.2em}.menu-card-drink .menu-card-image img{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;padding:8px;transition:transform .4s ease}.menu-card-drink:hover .menu-card-image img{transform:scale(1.04)}@media(max-width:700px){.menu-card-drink .menu-card-image{height:205px}}
+
+
+.menu-card-drink .menu-card-image:before{content:'ROLLS';position:absolute;z-index:0;left:50%;top:53%;transform:translate(-50%,-50%) rotate(-8deg);font:500 clamp(38px,5.5vw,70px)/1 Georgia,'Times New Roman',serif;letter-spacing:.12em;color:#f4efe51a;white-space:nowrap;text-shadow:0 5px 22px #0005;pointer-events:none}.menu-card-drink .menu-card-image:after{content:'';position:absolute;z-index:0;inset:20px 29%;border:1px solid #f4efe52b;border-radius:50%;box-shadow:0 0 0 12px #f4efe509,inset 0 0 35px #f4efe50a;transform:rotate(9deg);pointer-events:none}.menu-card-drink-dredhez .menu-card-image{background:radial-gradient(ellipse at 50% 48%,#294f75 0,#0b493f 49%,#06231e 100%)}.menu-card-drink-dredhez .menu-card-image:after{border-color:#f27c8233;box-shadow:0 0 0 12px #f27c8209,inset 0 0 35px #f27c8212}.menu-card-drink-molle .menu-card-image{background:radial-gradient(ellipse at 50% 48%,#73642d 0,#245244 47%,#06231e 100%)}.menu-card-drink-molle .menu-card-image:after{border-color:#f4cf6b38;box-shadow:0 0 0 12px #f4cf6b0a,inset 0 0 35px #f4cf6b12}
+
+
+.menu-card-drink-schweppes-tonic .menu-card-image{background:radial-gradient(ellipse at 50% 48%,#75652b 0,#245244 47%,#06231e 100%)}.menu-card-drink-schweppes-tonic .menu-card-image:after{border-color:#f4cf6b38;box-shadow:0 0 0 12px #f4cf6b0a,inset 0 0 35px #f4cf6b12}
+
