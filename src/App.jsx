@@ -30,6 +30,7 @@ const sandwichImageFiles = {
   'sandwich-pule': 'sandwich pule.webp',
   'sandwich-mix': 'sandwich mix.webp',
   'sandwich-tuna': 'sandwich tuna.webp',
+  'sandwich-vegetarian': 'sandwich vegetarian.webp',
 };
 const sandwichImagePath = (productId) => `/assets/sandwiches/${encodeURIComponent(sandwichImageFiles[productId])}`;
 const sauceImageFiles = {
