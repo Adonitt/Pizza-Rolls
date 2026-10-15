@@ -9,6 +9,7 @@ import {
 const dayNames = ['E diel', 'E hënë', 'E martë', 'E mërkurë', 'E enjte', 'E premte', 'E shtunë'];
 const sizeDescriptions = { mini: 'E vogël', '30': 'E mesme · 1 person', '40': 'Për 2 persona', '60': 'Familjare' };
 const pizzaImageFiles = { 'pershuto-pizza': 'pershuto.webp', 'tuna-pizza': 'tuna.webp', 'loca-pizza': 'loca.webp' };
+const pizzaImagePath = (productId) => `/assets/pizzas/pizza/${pizzaImageFiles[productId] || `${productId}.webp`}`;
 
 function ArrowIcon() {
   return <svg className="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>;
@@ -40,9 +41,11 @@ function Hero() {
   </section>;
 }
 
-function MenuSection({ onChoose }) {
+function MenuSection({ onChoose, onAddPizza }) {
   const firstCategory = menu.categories.find((category) => menu.products.some((product) => product.categoryId === category.id))?.id;
   const [selectedCategory, setSelectedCategory] = useState(firstCategory || 'pizza');
+  const [selectedVariants, setSelectedVariants] = useState({});
+  const [pizzaInstructions, setPizzaInstructions] = useState({});
   const products = menu.products.filter((product) => product.available !== false);
   const visible = products.filter((product) => product.categoryId === selectedCategory);
   const categoryName = (id) => menu.categories.find((category) => category.id === id)?.name || id;
@@ -54,8 +57,26 @@ function MenuSection({ onChoose }) {
       const prices = (product.variants || []).map((variant) => Number(variant.priceCents));
       const from = prices.length ? Math.min(...prices) : Number(product.priceCents || 0);
       const isPizza = product.categoryId === 'pizza';
-      const pizzaImage = pizzaImageFiles[product.id] || `${product.id}.webp`;
-      return <article className={`menu-card ${isPizza ? 'menu-card-pizza' : ''}`} key={product.id}>{isPizza && <div className="menu-card-image"><div className="pizza-image-placeholder" aria-hidden="true"><span className="pizza-placeholder-plate" /><span>FOTO E PICËS</span></div><span className="pizza-image-badge">ROLLS / PIZZA</span><img src={`/assets/pizzas/pizza/${pizzaImage}`} alt={`Pizza ${product.name}`} loading="lazy" onError={(event) => { event.currentTarget.style.display = 'none'; }} /></div>}<div className="menu-card-content"><div className="menu-card-title"><div><p className="menu-card-category">{categoryName(product.categoryId)}</p><h3>{product.name}</h3></div><span className="card-number">{String(index + 1).padStart(2, '0')}</span></div><p className="menu-card-description">{product.description || ''}</p>{prices.length > 0 && <div className="card-prices" aria-label="Çmimet sipas madhësisë">{product.variants.map((variant) => <span key={variant.id}><small>{variant.name}</small><strong>{formatPrice(variant.priceCents)}</strong></span>)}</div>}<div className="menu-card-bottom"><strong>{prices.length ? 'Nga ' : ''}{formatPrice(from)}</strong><button type="button" onClick={() => onChoose(product)} aria-label={`Zgjedh ${product.name}`}><span>Shto</span> +</button></div></div></article>;
+      const selectedVariantId = selectedVariants[product.id] || '';
+      const selectedVariant = product.variants?.find((variant) => variant.id === selectedVariantId);
+      const instructions = pizzaInstructions[product.id] || '';
+      const canAddPizza = Boolean(selectedVariant) && (!product.requiresInstructions || instructions.trim().length > 0);
+      const addPizza = () => {
+        if (!canAddPizza) return;
+        onAddPizza({ productId: product.id, variantId: selectedVariant.id, extraIds: [], instructions: instructions.trim(), quantity: 1 });
+      };
+      return <article className={`menu-card ${isPizza ? 'menu-card-pizza' : ''}`} key={product.id}>
+        {isPizza && <div className="menu-card-image"><div className="pizza-image-placeholder" aria-hidden="true"><span className="pizza-placeholder-plate" /><span>FOTO E PICËS</span></div><span className="pizza-image-badge">ROLLS / PIZZA</span><img src={pizzaImagePath(product.id)} alt={`Pizza ${product.name}`} loading="lazy" onError={(event) => { event.currentTarget.style.display = 'none'; }} /></div>}
+        <div className="menu-card-content">
+          <div className="menu-card-title"><div><p className="menu-card-category">{categoryName(product.categoryId)}</p><h3>{product.name}</h3></div><span className="card-number">{String(index + 1).padStart(2, '0')}</span></div>
+          <p className="menu-card-description">{product.description || ''}</p>
+          {isPizza && product.variants?.length > 0 && <div className="card-prices" role="group" aria-label={`Zgjedh madhësinë e picës ${product.name}`}>
+            {product.variants.map((variant) => <button className={`pizza-size-choice ${selectedVariantId === variant.id ? 'selected' : ''}`} type="button" key={variant.id} aria-pressed={selectedVariantId === variant.id} onClick={() => setSelectedVariants((current) => ({ ...current, [product.id]: variant.id }))}><span><strong>{variant.name}</strong><small>{sizeDescriptions[variant.id]}</small></span><b>{formatPrice(variant.priceCents)}</b></button>)}
+          </div>}
+          {isPizza && product.requiresInstructions && <label className="pizza-instructions">Përbërësit që dëshiron<textarea rows="2" value={instructions} onChange={(event) => setPizzaInstructions((current) => ({ ...current, [product.id]: event.target.value }))} placeholder="Shkruaj përbërësit e preferuar" /></label>}
+          <div className="menu-card-bottom"><strong>{isPizza ? (selectedVariant ? formatPrice(selectedVariant.priceCents) : 'Zgjedh madhësinë') : formatPrice(from)}</strong>{isPizza ? <button type="button" disabled={!canAddPizza} onClick={addPizza} aria-label={`Shto Pizza ${product.name} në shportë`}><span>Shto</span> +</button> : <button type="button" onClick={() => onChoose(product)} aria-label={`Zgjedh ${product.name}`}><span>Shto</span> +</button>}</div>
+        </div>
+      </article>;
     })}</div>
   </div></section>;
 }
@@ -112,7 +133,10 @@ function CartDialog({ open, cart, onClose, onChangeCart }) {
   const orderOpen = canOrder(business, menu);
   return <dialog className="cart-dialog" ref={ref} onClose={onClose}><div className="cart-panel">
     <div className="dialog-head"><div><p className="section-kicker">POROSIA JOTE</p><h2>Shporta</h2></div><button type="button" className="icon-close" aria-label="Mbyll shportën" onClick={() => ref.current.close()}>×</button></div>
-    <div className="cart-scroll">{!lines.length ? <div className="cart-empty">Shporta është e zbrazët. Zgjedh produktet nga menuja dhe kthehu këtu kur të jesh gati.</div> : lines.map((line, index) => <div className="cart-line" key={`${line.productId}-${line.variantId}-${line.instructions}-${index}`}><div><h3>{line.name}</h3><small>{[line.variantName, ...line.extraNames, line.instructions].filter(Boolean).join(', ')}</small><strong>{formatPrice(line.totalPriceCents)}</strong></div><div className="cart-line-actions"><button type="button" aria-label="Ule sasinë" onClick={() => update(index, line.quantity - 1)}>−</button><span>{line.quantity}</span><button type="button" aria-label="Rrite sasinë" onClick={() => update(index, Math.min(20, line.quantity + 1))}>+</button><button type="button" className="remove-line" onClick={() => update(index, 0)}>Hiqe</button></div></div>)}
+    <div className="cart-scroll">{!lines.length ? <div className="cart-empty">Shporta është e zbrazët. Zgjedh produktet nga menuja dhe kthehu këtu kur të jesh gati.</div> : lines.map((line, index) => { const product = menu.products.find((item) => item.id === line.productId); const isPizza = product?.categoryId === 'pizza'; return <div className="cart-line" key={`${line.productId}-${line.variantId}-${line.instructions}-${index}`}>
+        <div className="cart-line-product">{isPizza && <span className="cart-line-image-wrap"><img className="cart-line-image" src={pizzaImagePath(line.productId)} alt={`Pizza ${product.name}`} onError={(event) => { event.currentTarget.style.display = 'none'; event.currentTarget.nextElementSibling.hidden = false; }} /><span className="cart-line-image-fallback" hidden aria-hidden="true">🍕</span></span>}<div><h3>{line.name}</h3><small>{[line.variantName, ...line.extraNames, line.instructions].filter(Boolean).join(', ')}</small><strong>{formatPrice(line.totalPriceCents)}</strong></div></div>
+        <div className="cart-line-actions"><button type="button" aria-label="Ule sasinë" onClick={() => update(index, line.quantity - 1)}>−</button><span>{line.quantity}</span><button type="button" aria-label="Rrite sasinë" onClick={() => update(index, Math.min(20, line.quantity + 1))}>+</button><button type="button" className="remove-line" onClick={() => update(index, 0)}>Hiqe</button></div>
+      </div>; })}
       <form id="checkoutForm" noValidate onSubmit={submit}><fieldset className="method-fieldset"><legend>Si dëshiron ta marrësh?</legend><label><input type="radio" name="method" value="delivery" checked={method === 'delivery'} onChange={() => setMethod('delivery')} /><span>Dërgesë</span></label><label><input type="radio" name="method" value="pickup" checked={method === 'pickup'} onChange={() => setMethod('pickup')} /><span>Marrje në lokal</span></label></fieldset>
         {method === 'delivery' && <div>{business.deliveryZones.length > 0 && <div><label htmlFor="zone">Zona e dërgesës</label><select id="zone" value={form.zoneId} onChange={(event) => setForm({ ...form, zoneId: event.target.value })}><option value="">Zgjedh zonën</option>{business.deliveryZones.map((zone) => <option value={zone.id} key={zone.id}>{zone.name} — {zone.feeCents === 0 ? 'Falas' : formatPrice(zone.feeCents)}</option>)}</select></div>}<label htmlFor="address">Adresa e plotë</label><input id="address" autoComplete="street-address" placeholder="Rruga, numri, pika orientuese" value={form.address} onChange={(event) => setForm({ ...form, address: event.target.value })} required /><p className="delivery-coverage">Dërgesa është falas. Stafi e konfirmon mbulimin e adresës në WhatsApp.</p></div>}
         <div className="field-pair"><div><label htmlFor="customerName">Emri</label><input id="customerName" autoComplete="name" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required /></div><div><label htmlFor="customerPhone">Telefoni</label><input id="customerPhone" autoComplete="tel" inputMode="tel" value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} required /></div></div>
@@ -162,5 +186,5 @@ export default function App() {
   useEffect(() => { try { localStorage.setItem('rolls-cart-v1', JSON.stringify(cart)); } catch {} }, [cart]);
   useEffect(() => { if (!toast) return undefined; const timer = setTimeout(() => setToast(''), 3500); return () => clearTimeout(timer); }, [toast]);
   const add = (item) => { const product = menu.products.find((entry) => entry.id === item.productId); setCart((current) => normalizeCart([...current, item], menu)); setToast(`${product.name} u shtua në shportë. Vazhdo me menynë ose hape shportën kur të jesh gati.`); };
-  return <><a className="skip-link" href="#menu">Kalo te menuja</a><Header count={count} onOpenCart={() => setCartOpen(true)} /><main><Hero /><MenuSection onChoose={setActiveProduct} /><ProcessSection /><VisitSection /></main><Footer />{toast && <div className="cart-toast" role="status" aria-live="polite">{toast}</div>}<button className="mobile-cart" type="button" onClick={() => setCartOpen(true)}><span>Shporta <b>{count}</b></span><span>{formatPrice(total)} <ArrowIcon /></span></button><ProductDialog product={activeProduct} onClose={() => setActiveProduct(null)} onAdd={add} /><CartDialog open={cartOpen} cart={cart} onClose={() => setCartOpen(false)} onChangeCart={setCart} /></>;
+  return <><a className="skip-link" href="#menu">Kalo te menuja</a><Header count={count} onOpenCart={() => setCartOpen(true)} /><main><Hero /><MenuSection onChoose={setActiveProduct} onAddPizza={add} /><ProcessSection /><VisitSection /></main><Footer />{toast && <div className="cart-toast" role="status" aria-live="polite">{toast}</div>}<button className="mobile-cart" type="button" onClick={() => setCartOpen(true)}><span>Shporta <b>{count}</b></span><span>{formatPrice(total)} <ArrowIcon /></span></button><ProductDialog product={activeProduct} onClose={() => setActiveProduct(null)} onAdd={add} /><CartDialog open={cartOpen} cart={cart} onClose={() => setCartOpen(false)} onChangeCart={setCart} /></>;
 }
