@@ -83,14 +83,21 @@ function Hero() {
 function MenuSection({ onChoose }) {
   const firstCategory = menu.categories.find((category) => menu.products.some((product) => product.categoryId === category.id))?.id;
   const [selectedCategory, setSelectedCategory] = useState(firstCategory || 'pizza');
+  const menuGridRef = useRef(null);
+  const previousCategoryRef = useRef(selectedCategory);
   const products = menu.products.filter((product) => product.available !== false);
   const visible = products.filter((product) => product.categoryId === selectedCategory);
   const categoryName = (id) => menu.categories.find((category) => category.id === id)?.name || id;
+  useEffect(() => {
+    if (previousCategoryRef.current === selectedCategory) return;
+    previousCategoryRef.current = selectedCategory;
+    menuGridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [selectedCategory]);
   return <section className="menu-section section-pad" id="menu"><div className="shell">
     <div className="section-heading"><div><p className="section-kicker">01 / MENYJA</p><h2>Çka të hahet <em>sot?</em></h2></div><p>Çdo produkt veçmas, me përbërës dhe çmime të qarta. Zgjedh madhësinë e pizzës, pastaj dërgo porosinë në WhatsApp.</p></div>
     <a className="source-menu-link" href="/assets/menu-original.png" target="_blank" rel="noreferrer">Shiko menynë origjinale <ArrowIcon /></a>
     <div className="menu-controls" aria-label="Kategoritë e menysë">{menu.categories.map((category) => { const count = products.filter((product) => product.categoryId === category.id).length; return count > 0 && <button key={category.id} type="button" className={`category-pill ${category.id === selectedCategory ? 'active' : ''}`} aria-pressed={category.id === selectedCategory} onClick={() => setSelectedCategory(category.id)}>{category.name} <span>{count}</span></button>; })}</div>
-    <div className="menu-grid" aria-live="polite">{visible.map((product, index) => {
+    <div className="menu-grid" ref={menuGridRef} aria-live="polite">{visible.map((product, index) => {
       const prices = (product.variants || []).map((variant) => Number(variant.priceCents));
       const from = prices.length ? Math.min(...prices) : Number(product.priceCents || 0);
       const isPizza = product.categoryId === 'pizza';
