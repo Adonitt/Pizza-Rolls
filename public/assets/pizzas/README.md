@@ -1,22 +1,12 @@
 # Fotot e picave
 
-Vendosi fotografitë këtu me formatin WebP. Faqja i lidh automatikisht me kartën sipas emrit të skedarit. Përdor foto horizontale, idealisht 1200 × 800 px.
+Vendosi fotot WebP në këtë folder: `public/assets/pizzas/pizza/`. Faqja shfaq automatikisht çdo fotografi që gjendet aty. Fotot që mungojnë mbeten me vendmbajtësin “FOTO E PICËS”.
 
-- margarita.webp
-- fungi-heaven.webp
-- vegetarian-pizza.webp
-- peperoni.webp
-- pershuto-pizza.webp
-- rolls.webp
-- oriental.webp
-- tuna-pizza.webp
-- hawaian.webp
-- macho.webp
-- kater-djathrat.webp
-- pizza-juaj.webp
-- loca-pizza.webp
-- bbq-pizza.webp
-- chike.webp
-- mexican-pizza.webp
+Fotot aktuale:
 
-Derisa të shtohet fotografia përkatëse, karta e shfaq vendmbajtësin “FOTO E PICËS”.
+- `loca.webp` → Loca
+- `pershuto.webp` → Pershuto
+- `rolls.webp` → Rolls
+- `tuna.webp` → Tuna
+
+Për picat tjera, përdor emrin e skedarit sipas ID-së në menu, p.sh. `margarita.webp`, `fungi-heaven.webp`, `vegetarian-pizza.webp`. Fotot horizontale rreth 1200 × 800 px rekomandohen.

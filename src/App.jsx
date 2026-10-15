@@ -8,6 +8,7 @@ import {
 
 const dayNames = ['E diel', 'E hënë', 'E martë', 'E mërkurë', 'E enjte', 'E premte', 'E shtunë'];
 const sizeDescriptions = { mini: 'E vogël', '30': 'E mesme · 1 person', '40': 'Për 2 persona', '60': 'Familjare' };
+const pizzaImageFiles = { 'pershuto-pizza': 'pershuto.webp', 'tuna-pizza': 'tuna.webp', 'loca-pizza': 'loca.webp' };
 
 function ArrowIcon() {
   return <svg className="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>;
@@ -53,7 +54,8 @@ function MenuSection({ onChoose }) {
       const prices = (product.variants || []).map((variant) => Number(variant.priceCents));
       const from = prices.length ? Math.min(...prices) : Number(product.priceCents || 0);
       const isPizza = product.categoryId === 'pizza';
-      return <article className={`menu-card ${isPizza ? 'menu-card-pizza' : ''}`} key={product.id}>{isPizza && <div className="menu-card-image"><div className="pizza-image-placeholder" aria-hidden="true"><span className="pizza-placeholder-plate" /><span>FOTO E PICËS</span></div><span className="pizza-image-badge">ROLLS / PIZZA</span><img src={`/assets/pizzas/${product.id}.webp`} alt={`Pizza ${product.name}`} loading="lazy" onError={(event) => { event.currentTarget.style.display = 'none'; }} /></div>}<div className="menu-card-content"><div className="menu-card-title"><div><p className="menu-card-category">{categoryName(product.categoryId)}</p><h3>{product.name}</h3></div><span className="card-number">{String(index + 1).padStart(2, '0')}</span></div><p className="menu-card-description">{product.description || ''}</p>{prices.length > 0 && <div className="card-prices" aria-label="Çmimet sipas madhësisë">{product.variants.map((variant) => <span key={variant.id}><small>{variant.name}</small><strong>{formatPrice(variant.priceCents)}</strong></span>)}</div>}<div className="menu-card-bottom"><strong>{prices.length ? 'Nga ' : ''}{formatPrice(from)}</strong><button type="button" onClick={() => onChoose(product)} aria-label={`Zgjedh ${product.name}`}><span>Shto</span> +</button></div></div></article>;
+      const pizzaImage = pizzaImageFiles[product.id] || `${product.id}.webp`;
+      return <article className={`menu-card ${isPizza ? 'menu-card-pizza' : ''}`} key={product.id}>{isPizza && <div className="menu-card-image"><div className="pizza-image-placeholder" aria-hidden="true"><span className="pizza-placeholder-plate" /><span>FOTO E PICËS</span></div><span className="pizza-image-badge">ROLLS / PIZZA</span><img src={`/assets/pizzas/pizza/${pizzaImage}`} alt={`Pizza ${product.name}`} loading="lazy" onError={(event) => { event.currentTarget.style.display = 'none'; }} /></div>}<div className="menu-card-content"><div className="menu-card-title"><div><p className="menu-card-category">{categoryName(product.categoryId)}</p><h3>{product.name}</h3></div><span className="card-number">{String(index + 1).padStart(2, '0')}</span></div><p className="menu-card-description">{product.description || ''}</p>{prices.length > 0 && <div className="card-prices" aria-label="Çmimet sipas madhësisë">{product.variants.map((variant) => <span key={variant.id}><small>{variant.name}</small><strong>{formatPrice(variant.priceCents)}</strong></span>)}</div>}<div className="menu-card-bottom"><strong>{prices.length ? 'Nga ' : ''}{formatPrice(from)}</strong><button type="button" onClick={() => onChoose(product)} aria-label={`Zgjedh ${product.name}`}><span>Shto</span> +</button></div></div></article>;
     })}</div>
   </div></section>;
 }
