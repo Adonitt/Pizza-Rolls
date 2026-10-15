@@ -33,12 +33,7 @@
 .pizza-image-badge{position:absolute;z-index:2;top:24px;left:24px;padding:7px 9px;background:#071712c9;color:#f4efe5;font-size:8px;font-weight:800;letter-spacing:.16em}
 .menu-card-pizza .menu-card-image img{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
 .menu-card-pizza:hover .menu-card-image img{transform:scale(1.04)}
-.menu-grid-pizza{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.menu-card-pizza{display:grid;grid-template-columns:minmax(145px,34%) minmax(0,1fr);min-height:280px}
-.menu-card-pizza .menu-card-image{height:auto;min-height:280px}
-.menu-card-pizza .menu-card-content{min-width:0;padding:22px}
 @media(max-width:700px){.menu-card-pizza .menu-card-image{height:205px}}
-@media(max-width:700px){.menu-card-pizza{grid-template-columns:1fr;min-height:0}.menu-card-pizza .menu-card-image{height:205px;min-height:0}.menu-card-pizza .menu-card-content{padding:20px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit-two,.ticker-track{animation:none}.button,.menu-card{transition:none}}
 .menu-card-title{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.card-number{font:400 18px Georgia,serif;color:#b9ad9c}.menu-card-description{margin-bottom:18px}.card-prices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:12px 0 18px;border-top:1px solid var(--line)}.card-prices span{display:grid;gap:3px;min-width:0}.card-prices small{font-size:9px;color:var(--muted);text-transform:uppercase;white-space:nowrap}.card-prices strong{font-size:12px;white-space:nowrap}.menu-card-bottom{border-top:1px solid var(--line);padding-top:16px}.menu-card button{width:auto;min-width:84px;height:40px;padding:0 14px;border-radius:24px;display:flex;align-items:center;justify-content:center;gap:8px}.menu-card button span{font:800 10px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}.delivery-coverage{margin:10px 0 0;border-left:3px solid var(--pine);padding-left:10px;font-size:11px;color:var(--muted);line-height:1.5}
 @media(max-width:420px){.card-prices{gap:4px}.card-prices strong{font-size:11px}.menu-card button{min-width:78px}}
