@@ -11,11 +11,13 @@ const sizeDescriptions = { mini: 'E vogël', '30': 'E mesme · 1 person', '40': 
 const pizzaImageFiles = { 'pershuto-pizza': 'pershuto.webp', 'tuna-pizza': 'tuna.webp', 'loca-pizza': 'loca.webp' };
 const pizzaImagePath = (productId) => `/assets/pizzas/pizza/${pizzaImageFiles[productId] || `${productId}.webp`}`;
 const drinkImageFiles = {
+  molle: 'apple.jpg',
   'coca-cola': 'coca-cola.webp',
   'coca-cola-zero': 'coca-cola-zero.webp',
   'fanta-exotic': 'fanta-exotic.webp',
   'fanta-orange': 'fanta-orange.webp',
   'ice-tea': 'ice-tea.webp',
+  dredhez: 'dredhez.webp',
   portokall: 'portokall.webp',
   'red-bull': 'red-bull.webp',
   'schweppes-tonic': 'schweppes-tonic.webp',
