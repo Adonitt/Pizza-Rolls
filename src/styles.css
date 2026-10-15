@@ -78,7 +78,6 @@
 
 
 .menu-card-drink .menu-card-image:before{content:'ROLLS';position:absolute;z-index:0;left:50%;top:53%;transform:translate(-50%,-50%) rotate(-8deg);font:500 clamp(38px,5.5vw,70px)/1 Georgia,'Times New Roman',serif;letter-spacing:.12em;color:#f4efe51a;white-space:nowrap;text-shadow:0 5px 22px #0005;pointer-events:none}.menu-card-drink .menu-card-image:after{content:'';position:absolute;z-index:0;inset:20px 29%;border:1px solid #f4efe52b;border-radius:50%;box-shadow:0 0 0 12px #f4efe509,inset 0 0 35px #f4efe50a;transform:rotate(9deg);pointer-events:none}.menu-card-drink-dredhez .menu-card-image{background:radial-gradient(ellipse at 50% 48%,#294f75 0,#0b493f 49%,#06231e 100%)}.menu-card-drink-dredhez .menu-card-image:after{border-color:#f27c8233;box-shadow:0 0 0 12px #f27c8209,inset 0 0 35px #f27c8212}.menu-card-drink-molle .menu-card-image{background:radial-gradient(ellipse at 50% 48%,#73642d 0,#245244 47%,#06231e 100%)}.menu-card-drink-molle .menu-card-image:after{border-color:#f4cf6b38;box-shadow:0 0 0 12px #f4cf6b0a,inset 0 0 35px #f4cf6b12}
-.menu-card-drink-molle .menu-card-image img{mix-blend-mode:screen}
 
 
 .menu-card-drink-schweppes-tonic .menu-card-image{background:radial-gradient(ellipse at 50% 48%,#75652b 0,#245244 47%,#06231e 100%)}.menu-card-drink-schweppes-tonic .menu-card-image:after{border-color:#f4cf6b38;box-shadow:0 0 0 12px #f4cf6b0a,inset 0 0 35px #f4cf6b12}
