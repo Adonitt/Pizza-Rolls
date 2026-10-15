@@ -16,9 +16,22 @@ const pizzaImageFiles = {
   oriental: 'oriental.jpg',
   'vegetarian-pizza': 'vegetariane.jpg',
   macho: 'macho.jpg',
+  'pizza-juaj': 'pizza-juaj.webp',
+  'mexican-pizza': 'mexican.webp',
+  chike: 'chike.webp',
+  'kater-djathrat': '4-djathrat.webp',
+  peperoni: 'peperoni.webp',
 };
 const pizzaImagesWithBlackBackground = new Set(['fungi-heaven', 'oriental', 'vegetarian-pizza', 'macho']);
 const pizzaImagePath = (productId) => `/assets/pizzas/pizza/${pizzaImageFiles[productId] || `${productId}.webp`}`;
+const sauceImageFiles = {
+  'salce-bbq': 'salce-bbq.webp',
+  'salce-macho': 'salce-macho.webp',
+  'salce-classic': 'salce-classic.webp',
+  'salce-mexican': 'salce-mexican.webp',
+  'salce-loca': 'salce-loca.webp',
+};
+const sauceImagePath = (productId) => `/assets/pizzas/sauces/${sauceImageFiles[productId]}`;
 const drinkImageFiles = {
   molle: 'molle.webp',
   boronic: 'boronice.webp',
@@ -82,9 +95,11 @@ function MenuSection({ onChoose }) {
       const from = prices.length ? Math.min(...prices) : Number(product.priceCents || 0);
       const isPizza = product.categoryId === 'pizza';
       const hasDrinkImage = product.categoryId === 'drinks' && drinkImageFiles[product.id];
-      return <article className={`menu-card ${isPizza ? 'menu-card-pizza' : ''} ${hasDrinkImage ? `menu-card-drink menu-card-drink-${product.id}` : ''}`} key={product.id}>
+      const hasSauceImage = product.categoryId === 'sauces' && sauceImageFiles[product.id];
+      return <article className={`menu-card ${isPizza ? 'menu-card-pizza' : ''} ${hasDrinkImage ? `menu-card-drink menu-card-drink-${product.id}` : ''} ${hasSauceImage ? 'menu-card-sauce' : ''}`} key={product.id}>
         {isPizza && <div className={`menu-card-image ${pizzaImagesWithBlackBackground.has(product.id) ? 'menu-card-image-black-background' : ''}`}><div className="pizza-image-placeholder" aria-hidden="true"><span className="pizza-placeholder-plate" /><span>FOTO E PICËS</span></div><span className="pizza-image-badge">{product.highlight || 'ROLLS / PIZZA'}</span><img src={pizzaImagePath(product.id)} alt={`Pizza ${product.name}`} loading="lazy" onError={(event) => { event.currentTarget.style.display = 'none'; }} /></div>}
         {hasDrinkImage && <div className="menu-card-image"><span className="drink-image-placeholder" aria-hidden="true">ROLLS / PIJE</span><span className="pizza-image-badge">ROLLS / PIJE</span><img src={drinkImagePath(product.id)} alt={`Pije ${product.name}`} loading="lazy" onError={(event) => { event.currentTarget.style.display = 'none'; }} /></div>}
+        {hasSauceImage && <div className="menu-card-image menu-card-image-sauce"><span className="pizza-image-badge">ROLLS / SALCË</span><img src={sauceImagePath(product.id)} alt={product.name} loading="lazy" onError={(event) => { event.currentTarget.style.display = 'none'; }} /></div>}
         <div className="menu-card-content">
           <div className="menu-card-title"><div><p className="menu-card-category">{categoryName(product.categoryId)}</p><h3>{product.name}</h3></div><span className="card-number">{String(index + 1).padStart(2, '0')}</span></div>
           <p className="menu-card-description">{product.description || ''}</p>
@@ -150,8 +165,8 @@ function CartDialog({ open, cart, onClose, onChangeCart }) {
   const orderOpen = canOrder(business, menu);
   return <dialog className="cart-dialog" ref={ref} onClose={onClose}><div className="cart-panel">
     <div className="dialog-head"><div><p className="section-kicker">POROSIA JOTE</p><h2>Shporta</h2></div><button type="button" className="icon-close" aria-label="Mbyll shportën" onClick={() => ref.current.close()}>×</button></div>
-    <div className="cart-scroll">{!lines.length ? <div className="cart-empty">Shporta është e zbrazët. Zgjedh produktet nga menuja dhe kthehu këtu kur të jesh gati.</div> : lines.map((line, index) => { const product = menu.products.find((item) => item.id === line.productId); const isPizza = product?.categoryId === 'pizza'; const hasDrinkImage = product?.categoryId === 'drinks' && Boolean(drinkImageFiles[product.id]); const hasImage = isPizza || hasDrinkImage; const imageSrc = isPizza ? pizzaImagePath(line.productId) : drinkImagePath(line.productId); const imageAlt = isPizza ? `Pizza ${product.name}` : `Pije ${product.name}`; return <div className="cart-line" key={`${line.productId}-${line.variantId}-${line.instructions}-${index}`}>
-        <div className="cart-line-product">{hasImage && <span className={`cart-line-image-wrap ${hasDrinkImage ? 'cart-line-image-wrap-drink' : ''}`}><img className="cart-line-image" src={imageSrc} alt={imageAlt} onError={(event) => { event.currentTarget.style.display = 'none'; event.currentTarget.nextElementSibling.hidden = false; }} /><span className="cart-line-image-fallback" hidden aria-hidden="true">{isPizza ? '🍕' : '🥤'}</span></span>}<div><h3>{line.name}</h3><small>{[line.variantName, ...line.extraNames, line.instructions].filter(Boolean).join(', ')}</small><strong>{formatPrice(line.totalPriceCents)}</strong></div></div>
+    <div className="cart-scroll">{!lines.length ? <div className="cart-empty">Shporta është e zbrazët. Zgjedh produktet nga menuja dhe kthehu këtu kur të jesh gati.</div> : lines.map((line, index) => { const product = menu.products.find((item) => item.id === line.productId); const isPizza = product?.categoryId === 'pizza'; const hasDrinkImage = product?.categoryId === 'drinks' && Boolean(drinkImageFiles[product.id]); const hasSauceImage = product?.categoryId === 'sauces' && Boolean(sauceImageFiles[product.id]); const hasImage = isPizza || hasDrinkImage || hasSauceImage; const imageSrc = isPizza ? pizzaImagePath(line.productId) : hasDrinkImage ? drinkImagePath(line.productId) : sauceImagePath(line.productId); const imageAlt = isPizza ? `Pizza ${product.name}` : hasDrinkImage ? `Pije ${product.name}` : product.name; return <div className="cart-line" key={`${line.productId}-${line.variantId}-${line.instructions}-${index}`}>
+        <div className="cart-line-product">{hasImage && <span className={`cart-line-image-wrap ${hasDrinkImage ? 'cart-line-image-wrap-drink' : ''} ${hasSauceImage ? 'cart-line-image-wrap-sauce' : ''}`}><img className="cart-line-image" src={imageSrc} alt={imageAlt} onError={(event) => { event.currentTarget.style.display = 'none'; event.currentTarget.nextElementSibling.hidden = false; }} /><span className="cart-line-image-fallback" hidden aria-hidden="true">{isPizza ? '🍕' : hasDrinkImage ? '🥤' : '🥣'}</span></span>}<div><h3>{line.name}</h3><small>{[line.variantName, ...line.extraNames, line.instructions].filter(Boolean).join(', ')}</small><strong>{formatPrice(line.totalPriceCents)}</strong></div></div>
         <div className="cart-line-actions"><button type="button" aria-label="Ule sasinë" onClick={() => update(index, line.quantity - 1)}>−</button><span>{line.quantity}</span><button type="button" aria-label="Rrite sasinë" onClick={() => update(index, Math.min(20, line.quantity + 1))}>+</button><button type="button" className="remove-line" onClick={() => update(index, 0)}>Hiqe</button></div>
       </div>; })}
       <form id="checkoutForm" noValidate onSubmit={submit}><fieldset className="method-fieldset"><legend>Si dëshiron ta marrësh?</legend><label><input type="radio" name="method" value="delivery" checked={method === 'delivery'} onChange={() => setMethod('delivery')} /><span>Dërgesë</span></label><label><input type="radio" name="method" value="pickup" checked={method === 'pickup'} onChange={() => setMethod('pickup')} /><span>Marrje në lokal</span></label></fieldset>
