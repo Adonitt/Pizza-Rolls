@@ -232,6 +232,7 @@ function Footer() {
       <div className="footer-column footer-contact"><h2>Na kontakto</h2><a href={`tel:+${business.phoneInternational}`}>{business.phoneDisplay}</a><a href={`https://wa.me/${business.phoneInternational}`} target="_blank" rel="noreferrer">Na shkruaj në WhatsApp <ArrowIcon /></a><a href={mapUrl} target="_blank" rel="noreferrer">Hape lokacionin në Google Maps <ArrowIcon /></a><p>Çdo ditë · 10:00–02:00</p></div>
     </div>
     <div className="shell footer-bottom"><span>© {new Date().getFullYear()} Rolls Pizza & Coffee</span><span>Podujevë, Kosovë</span></div>
+    <div className="shell footer-credit"><a href="https://adonithalili.netlify.app/" target="_blank" rel="noopener noreferrer">Ndërtuar nga Adonit Halili <ArrowIcon /></a></div>
   </footer>;
 }
 
