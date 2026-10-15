@@ -8,7 +8,16 @@ import {
 
 const dayNames = ['E diel', 'E hënë', 'E martë', 'E mërkurë', 'E enjte', 'E premte', 'E shtunë'];
 const sizeDescriptions = { mini: 'E vogël', '30': 'E mesme · 1 person', '40': 'Për 2 persona', '60': 'Familjare' };
-const pizzaImageFiles = { 'pershuto-pizza': 'pershuto.webp', 'tuna-pizza': 'tuna.webp', 'loca-pizza': 'loca.webp' };
+const pizzaImageFiles = {
+  'pershuto-pizza': 'pershuto.webp',
+  'tuna-pizza': 'tuna.webp',
+  'loca-pizza': 'loca.webp',
+  'fungi-heaven': 'fungi.jpg',
+  oriental: 'oriental.jpg',
+  'vegetarian-pizza': 'vegetariane.jpg',
+  macho: 'macho.jpg',
+};
+const pizzaImagesWithBlackBackground = new Set(['fungi-heaven', 'oriental', 'vegetarian-pizza', 'macho']);
 const pizzaImagePath = (productId) => `/assets/pizzas/pizza/${pizzaImageFiles[productId] || `${productId}.webp`}`;
 const drinkImageFiles = {
   molle: 'molle.webp',
@@ -74,7 +83,7 @@ function MenuSection({ onChoose }) {
       const isPizza = product.categoryId === 'pizza';
       const hasDrinkImage = product.categoryId === 'drinks' && drinkImageFiles[product.id];
       return <article className={`menu-card ${isPizza ? 'menu-card-pizza' : ''} ${hasDrinkImage ? `menu-card-drink menu-card-drink-${product.id}` : ''}`} key={product.id}>
-        {isPizza && <div className="menu-card-image"><div className="pizza-image-placeholder" aria-hidden="true"><span className="pizza-placeholder-plate" /><span>FOTO E PICËS</span></div><span className="pizza-image-badge">{product.highlight || 'ROLLS / PIZZA'}</span><img src={pizzaImagePath(product.id)} alt={`Pizza ${product.name}`} loading="lazy" onError={(event) => { event.currentTarget.style.display = 'none'; }} /></div>}
+        {isPizza && <div className={`menu-card-image ${pizzaImagesWithBlackBackground.has(product.id) ? 'menu-card-image-black-background' : ''}`}><div className="pizza-image-placeholder" aria-hidden="true"><span className="pizza-placeholder-plate" /><span>FOTO E PICËS</span></div><span className="pizza-image-badge">{product.highlight || 'ROLLS / PIZZA'}</span><img src={pizzaImagePath(product.id)} alt={`Pizza ${product.name}`} loading="lazy" onError={(event) => { event.currentTarget.style.display = 'none'; }} /></div>}
         {hasDrinkImage && <div className="menu-card-image"><span className="drink-image-placeholder" aria-hidden="true">ROLLS / PIJE</span><span className="pizza-image-badge">ROLLS / PIJE</span><img src={drinkImagePath(product.id)} alt={`Pije ${product.name}`} loading="lazy" onError={(event) => { event.currentTarget.style.display = 'none'; }} /></div>}
         <div className="menu-card-content">
           <div className="menu-card-title"><div><p className="menu-card-category">{categoryName(product.categoryId)}</p><h3>{product.name}</h3></div><span className="card-number">{String(index + 1).padStart(2, '0')}</span></div>
