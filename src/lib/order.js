@@ -140,24 +140,36 @@ export function validateCheckout({ cart, menu, business, method, zoneId, name, p
 
 export function buildWhatsAppMessage({ cart, menu, business, method, zoneId, name, phone, address, notes }) {
   const totals = calculateTotals(cart, menu, method, zoneId, business.deliveryZones);
+  const isDelivery = method === 'delivery';
+  const restaurantName = String(business.name || 'Rolls Pizza').replace(/\s*&\s*Coffee$/i, '').trim();
+  const zoneLabel = String(totals.zoneName || 'konfirmohet nga stafi').replace(/^adresa /i, '');
   const rows = [
-    `Përshëndetje ${business.name}, dua të porosis:`,
+    `PËRSHËNDETJE ${restaurantName.toLocaleUpperCase('sq')}! Dua të bëj këtë porosi:`,
     '',
+    'POROSIA',
     ...totals.lines.map((line) => {
       const choices = [line.variantName, ...line.extraNames, line.instructions].filter(Boolean).join(', ');
       return `• ${line.quantity} × ${line.name}${choices ? ` (${choices})` : ''} — ${formatPrice(line.totalPriceCents)}`;
     }),
     '',
-    `Nëntotali: ${formatPrice(totals.subtotalCents)}`,
-    method === 'delivery' ? `Dërgesa (${totals.zoneName}): ${totals.deliveryCents === 0 ? 'Falas' : formatPrice(totals.deliveryCents)}` : 'Marrje në lokal',
-    `Totali: ${formatPrice(totals.totalCents)}`,
+    'MËNYRA E MARRJES',
+    isDelivery ? '🚚 Dërgesë' : `🏠 Marrje në lokal — ${restaurantName}${business.city ? `, ${business.city}` : ''}`,
+    ...(isDelivery ? [
+      `📍 Zona: ${zoneLabel}`,
+      `Dërgesa: ${totals.deliveryCents === 0 ? 'FALAS' : formatPrice(totals.deliveryCents)}`
+    ] : []),
     '',
-    `Emri: ${String(name).trim()}`,
-    `Telefoni: ${String(phone).trim()}`
+    'TË DHËNAT E KLIENTIT',
+    `Emri: ${String(name || '').trim()}`,
+    `Telefoni: ${String(phone || '').trim()}`,
+    ...(isDelivery ? [`Adresa: ${String(address || '').trim()}`] : []),
+    '',
+    `TOTALI: ${formatPrice(totals.totalCents)}`
   ];
-  if (method === 'delivery') rows.push(`Adresa: ${String(address).trim()}`);
-  if (String(notes || '').trim()) rows.push(`Shënime: ${String(notes).trim()}`);
-  rows.push('', 'Ju lutem, ma konfirmoni porosinë dhe kohën e përgatitjes. Pagesa bëhet në dorëzim/marrje.');
+  if (String(notes || '').trim()) rows.push('', `Shënime: ${String(notes).trim()}`);
+  rows.push('', isDelivery
+    ? 'Ju lutem, ma konfirmoni porosinë dhe kohën e dërgesës.'
+    : 'Ju lutem, ma konfirmoni porosinë dhe kohën kur mund ta marr në lokal.');
   return rows.join('\n');
 }
 

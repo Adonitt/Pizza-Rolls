@@ -72,7 +72,10 @@ test('checkout validates customer and zone then builds a readable WhatsApp draft
   assert.equal(validateCheckout({ ...payload, address: '' }).address, 'Shkruaj adresën e plotë.');
   const message = buildWhatsAppMessage(payload);
   assert.match(message, /Pizza Juaj \(30 cm, misër dhe kërpudha\)/);
-  assert.match(message, /Dërgesa \(Zona provë\):/);
+  assert.match(message, /MËNYRA E MARRJES\n🚚 Dërgesë\n📍 Zona: Zona provë\nDërgesa: FALAS/);
+  assert.match(message, /TË DHËNAT E KLIENTIT\nEmri: Arta\nTelefoni: 049 123 456\nAdresa: Rruga Test 12/);
+  assert.match(message, /TOTALI: 6,00 €/);
+  assert.doesNotMatch(message, /Nëntotali/);
   assert.match(message, /Adresa: Rruga Test 12/);
   const url = buildWhatsAppUrl(business.phoneInternational, message);
   assert.equal(new URL(url).hostname, 'wa.me');
@@ -96,6 +99,9 @@ test('cart and WhatsApp label products clearly by category', () => {
   assert.match(message, /Pizza Tuna \(30 cm\)/);
   assert.match(message, /Pizza Rolls \(Mini\)/);
   assert.match(message, /Sanduiç Tuna/);
+  assert.match(message, /🏠 Marrje në lokal — Rolls Pizza/);
+  assert.match(message, /TË DHËNAT E KLIENTIT\nEmri: Arta\nTelefoni: 049 123 456/);
+  assert.doesNotMatch(message, /Adresa:|Dërgesa:|Nëntotali/);
 });
 
 test('delivery without configured zones stays free and is confirmed by staff', () => {
@@ -109,5 +115,5 @@ test('delivery without configured zones stays free and is confirmed by staff', (
   const totals = calculateTotals(cart, menu, 'delivery', '', []);
   assert.equal(totals.validZone, true);
   assert.equal(totals.deliveryCents, 0);
-  assert.match(buildWhatsAppMessage(payload), /Dërgesa \(adresa konfirmohet nga stafi\): Falas/);
+  assert.match(buildWhatsAppMessage(payload), /📍 Zona: konfirmohet nga stafi\nDërgesa: FALAS/);
 });
