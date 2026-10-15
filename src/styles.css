@@ -31,7 +31,7 @@
 .pizza-placeholder-plate:before,.pizza-placeholder-plate:after{content:"";position:absolute;left:50%;top:50%;width:1px;height:20px;background:#f4efe555;transform-origin:50% 0}
 .pizza-placeholder-plate:before{transform:rotate(45deg)}.pizza-placeholder-plate:after{transform:rotate(135deg)}
 .pizza-image-badge{position:absolute;z-index:2;top:24px;left:24px;padding:7px 9px;background:#071712c9;color:#f4efe5;font-size:8px;font-weight:800;letter-spacing:.16em}
-.menu-card-pizza .menu-card-image img{position:absolute;z-index:1;inset:0;width:100%;height:100%;padding:8px;object-fit:contain;transition:transform .4s ease}
+.menu-card-pizza .menu-card-image img{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
 .menu-card-pizza:hover .menu-card-image img{transform:scale(1.02)}
 @media(max-width:700px){.menu-card-pizza .menu-card-image{height:205px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit-two,.ticker-track{animation:none}.button,.menu-card{transition:none}}
@@ -47,7 +47,7 @@
 @media(max-width:700px){.site-footer{padding:42px 0 18px}.footer-layout{grid-template-columns:1fr 1fr;gap:32px 22px;padding-bottom:26px}.footer-brand-block{grid-column:1/-1}.footer-brand-block>p{max-width:440px}.footer-watermark{width:270px;right:-104px;top:48%;opacity:.075}.footer-column{gap:11px}.footer-column a,.footer-column p{font-size:12px}.footer-bottom{font-size:10px}}
 @media(max-width:380px){.footer-layout{grid-template-columns:1fr;gap:26px}.footer-brand-block{grid-column:auto}.footer-watermark{width:230px;right:-105px;top:37%}}
 .product-dialog-image{position:relative;height:190px;margin:-32px -32px 23px;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#1b6655 0,#0b3b31 58%,#06231e 100%);isolation:isolate}
-.product-dialog-image>img{position:absolute;z-index:1;inset:0;width:100%;height:100%;padding:12px;object-fit:contain}
+.product-dialog-image>img{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:cover}
 .product-image-fallback{position:absolute;z-index:1;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;color:var(--cream);font-size:42px}
 .product-image-fallback small{font:800 9px Arial,Helvetica,sans-serif;letter-spacing:.16em;color:#f4efe5b8}
 .product-dialog-image .pizza-image-badge{z-index:2;top:13px;left:13px;padding:7px 9px}
