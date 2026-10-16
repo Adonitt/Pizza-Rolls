@@ -32,7 +32,7 @@
 .pizza-placeholder-plate:before,.pizza-placeholder-plate:after{content:"";position:absolute;left:50%;top:50%;width:1px;height:20px;background:#f4efe555;transform-origin:50% 0}
 .pizza-placeholder-plate:before{transform:rotate(45deg)}.pizza-placeholder-plate:after{transform:rotate(135deg)}
 .pizza-image-badge{position:absolute;z-index:2;top:24px;left:24px;padding:7px 9px;background:#071712c9;color:#f4efe5;font-size:8px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
-.menu-card-pizza .menu-card-image img{position:absolute;z-index:1;inset:0;width:100%;height:100%;padding:7px;object-fit:contain;transition:transform .4s ease}
+.menu-card-pizza .menu-card-image img{position:absolute;z-index:1;inset:0;width:100%;height:100%;padding:0;object-fit:cover;transition:transform .4s ease}
 .menu-card-pizza:hover .menu-card-image img{transform:scale(1.035)}
 @media(max-width:700px){.menu-card-pizza .menu-card-image{height:205px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit-two,.ticker-track{animation:none}.button,.menu-card{transition:none}}
@@ -115,7 +115,7 @@
 .menu-card-sauce .menu-card-image:after{content:'';position:absolute;z-index:0;inset:12px 30%;border:1px solid #f4efe55c;border-radius:50%;box-shadow:0 0 0 10px #f4efe50c,inset 0 0 32px #f4efe516;transform:rotate(-9deg);pointer-events:none}
 .menu-card-sauce .menu-card-image img{position:relative;z-index:1;width:100%;height:100%;object-fit:contain;padding:20px}
 .menu-card-sandwich .menu-card-image{height:190px;position:relative;background:radial-gradient(ellipse at 50% 52%,#1b6553 0,#0b3b31 58%,#06231e 100%);isolation:isolate}
-.menu-card-sandwich .menu-card-image:before,.product-dialog-image-sandwich:before{content:'';position:absolute;z-index:0;left:50%;top:52%;width:230px;height:230px;transform:translate(-50%,-50%) rotate(-7deg);background:url('/assets/rolls-logo.jpg') center/contain no-repeat;opacity:.52;mix-blend-mode:screen;filter:drop-shadow(0 0 12px #e1272725);pointer-events:none}.menu-card-sandwich .menu-card-image:after{content:'';position:absolute;z-index:0;inset:12px 30%;border:1px solid #f4efe53d;border-radius:50%;box-shadow:0 0 0 10px #f4efe509,inset 0 0 32px #f4efe510;transform:rotate(8deg);pointer-events:none}
+.menu-card-sandwich .menu-card-image:before,.product-dialog-image-sandwich:before{content:'';position:absolute;z-index:0;left:50%;top:52%;width:230px;height:230px;transform:translate(-50%,-50%) rotate(-7deg);background:url('/assets/rolls-logo.jpg') center/contain no-repeat;opacity:.18;mix-blend-mode:screen;filter:drop-shadow(0 0 12px #e1272725);pointer-events:none}.menu-card-sandwich .menu-card-image:after{content:'';position:absolute;z-index:0;inset:12px 30%;border:1px solid #f4efe53d;border-radius:50%;box-shadow:0 0 0 10px #f4efe509,inset 0 0 32px #f4efe510;transform:rotate(8deg);pointer-events:none}
 .menu-card-sandwich .menu-card-image img{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;padding:11px;mix-blend-mode:screen;transition:transform .35s ease}
 .sandwich-image-placeholder{position:absolute;inset:12px;z-index:1;display:grid;place-items:center;border:1px solid #f4efe533;color:#f4efe566;font-size:9px;font-weight:800;letter-spacing:.2em}
 .menu-card-sandwich:hover .menu-card-image img{transform:scale(1.035)}
@@ -126,3 +126,4 @@
 .cart-line-image-wrap-sauce{background:radial-gradient(ellipse at 50% 45%,#1b6655 0,#0b3b31 58%,#06231e 100%);border:1px solid rgba(244,239,229,.16)}
 .cart-line-image-wrap-sauce .cart-line-image{width:88%;height:88%;padding:0;object-fit:contain}
 .footer-credit{margin-top:16px;text-align:center;font-size:11px;letter-spacing:.04em}.footer-credit a{display:inline-flex;align-items:center;gap:7px;color:#bcc9c0;text-decoration:none;transition:color .2s}.footer-credit a:hover{color:#fff;text-decoration:underline;text-underline-offset:4px}.footer-credit a svg{width:12px;height:12px}
+@media(max-width:700px){.site-footer{padding-bottom:140px}}
