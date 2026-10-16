@@ -26,13 +26,14 @@
 @media(max-width:700px){.menu-card{min-height:0}.menu-card-content{min-height:178px;padding:20px}.menu-card h3{font-size:26px}.menu-card-description{margin-bottom:15px}.menu-card-bottom strong{font-size:20px}}
 .menu-card-pizza .menu-card-image{position:relative;height:190px;background:radial-gradient(ellipse at 50% 45%,#1b6655 0,#0b3b31 52%,#06231e 100%);isolation:isolate}
 .menu-card-pizza .menu-card-image:before{content:"";position:absolute;inset:12px;border:1px solid #f4efe533;z-index:0;pointer-events:none}
+.menu-card-pizza .menu-card-image:after{content:"";position:absolute;z-index:0;left:50%;top:50%;width:230px;height:230px;transform:translate(-50%,-50%) rotate(-6deg);background:url('/assets/rolls-logo.jpg') center/contain no-repeat;opacity:.46;mix-blend-mode:screen;filter:drop-shadow(0 0 12px #e1272725);pointer-events:none}
 .pizza-image-placeholder{position:absolute;inset:0;z-index:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;color:#f4efe5a8;font:800 9px/1 Arial,Helvetica,sans-serif;letter-spacing:.2em}
 .pizza-placeholder-plate{position:relative;width:76px;height:76px;border:1px solid #f4efe55c;border-radius:50%;box-shadow:0 0 0 7px #f4efe510,inset 0 0 0 5px #f4efe510}
 .pizza-placeholder-plate:before,.pizza-placeholder-plate:after{content:"";position:absolute;left:50%;top:50%;width:1px;height:20px;background:#f4efe555;transform-origin:50% 0}
 .pizza-placeholder-plate:before{transform:rotate(45deg)}.pizza-placeholder-plate:after{transform:rotate(135deg)}
 .pizza-image-badge{position:absolute;z-index:2;top:24px;left:24px;padding:7px 9px;background:#071712c9;color:#f4efe5;font-size:8px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
-.menu-card-pizza .menu-card-image img{position:absolute;z-index:1;inset:0;width:100%;height:100%;padding:0;object-fit:cover;transition:transform .4s ease}
-.menu-card-pizza:hover .menu-card-image img{transform:scale(1.02)}
+.menu-card-pizza .menu-card-image img{position:absolute;z-index:1;inset:0;width:100%;height:100%;padding:7px;object-fit:contain;transition:transform .4s ease}
+.menu-card-pizza:hover .menu-card-image img{transform:scale(1.035)}
 @media(max-width:700px){.menu-card-pizza .menu-card-image{height:205px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit-two,.ticker-track{animation:none}.button,.menu-card{transition:none}}
 .menu-card-title{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.card-number{font:400 18px Georgia,serif;color:#b9ad9c}.menu-card-description{margin-bottom:18px}.card-prices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:12px 0 18px;border-top:1px solid var(--line)}.card-prices span{display:grid;gap:3px;min-width:0}.card-prices small{font-size:9px;color:var(--muted);text-transform:uppercase;white-space:nowrap}.card-prices strong{font-size:12px;white-space:nowrap}.menu-card-bottom{border-top:1px solid var(--line);padding-top:16px}.menu-card button{width:auto;min-width:84px;height:40px;padding:0 14px;border-radius:24px;display:flex;align-items:center;justify-content:center;gap:8px}.menu-card button span{font:800 10px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}.delivery-coverage{margin:10px 0 0;border-left:3px solid var(--pine);padding-left:10px;font-size:11px;color:var(--muted);line-height:1.5}
