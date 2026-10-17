@@ -7,7 +7,7 @@ import {
 } from './lib/order.js';
 
 const dayNames = ['E diel', 'E hënë', 'E martë', 'E mërkurë', 'E enjte', 'E premte', 'E shtunë'];
-const sizeDescriptions = { mini: 'E vogël', '30': 'E mesme · 1 person', '40': 'Për 2 persona', '60': 'Familjare' };
+const sizeDescriptions = { mini: 'E vogël', '30': 'E mesme · 1 person', '40': 'Për 2 persona', '60': 'Familjare · Coca-Cola 1.5 L falas' };
 const pizzaImageFiles = {
   'pershuto-pizza': 'pershuto.webp',
   'tuna-pizza': 'tuna.webp',
