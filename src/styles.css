@@ -126,5 +126,72 @@
 .product-dialog-image-sandwich>img,.cart-line-image-wrap-sandwich .cart-line-image{mix-blend-mode:normal}
 .cart-line-image-wrap-sauce{background:radial-gradient(ellipse at 50% 45%,#1b6655 0,#0b3b31 58%,#06231e 100%);border:1px solid rgba(244,239,229,.16)}
 .cart-line-image-wrap-sauce .cart-line-image{width:88%;height:88%;padding:0;object-fit:contain}
+.cart-line.is-removing{overflow:hidden;pointer-events:none;animation:cart-line-remove .32s cubic-bezier(.2,.75,.25,1) both}
+@keyframes cart-line-remove{from{max-height:260px}to{max-height:0;padding-top:0;padding-bottom:0;border-bottom-color:transparent;opacity:0;transform:translateX(16px) scale(.98)}}
+.cart-empty{text-align:center;border-radius:18px;background:#fffdf8;padding:30px 22px}
+.cart-empty-icon{display:grid;place-items:center;width:46px;height:46px;margin:0 auto 14px;border-radius:50%;background:#f9e9e4;color:var(--red);font-size:25px}
+.cart-empty h3{font:400 26px Georgia,serif;margin:0 0 8px;color:var(--ink)}
+.cart-empty p{max-width:270px;margin:0 auto 17px;color:var(--muted);font-size:13px;line-height:1.55}
+.cart-empty-action{min-height:48px;padding:13px 20px;gap:16px;border-radius:999px;font-size:11px}
+.cart-empty-action svg{width:17px;height:17px;transition:transform .22s ease}
+.cart-empty-action:hover svg{transform:translateX(3px)}
 .footer-credit{margin-top:16px;text-align:center;font-size:11px;letter-spacing:.04em}.footer-credit a{display:inline-flex;align-items:center;gap:7px;color:#bcc9c0;text-decoration:none;transition:color .2s}.footer-credit a:hover{color:#fff;text-decoration:underline;text-underline-offset:4px}.footer-credit a svg{width:12px;height:12px}
 @media(max-width:700px){.site-footer{padding-bottom:140px}}
+
+/* Product and cart dialogs ease in and out, including their backdrop */
+.product-dialog,.cart-dialog{opacity:0;transform:translateY(22px) scale(.965);transition:opacity .36s cubic-bezier(.2,.75,.25,1),transform .36s cubic-bezier(.2,.75,.25,1),display .36s allow-discrete,overlay .36s allow-discrete}
+.product-dialog[open],.cart-dialog[open]{opacity:1;transform:translateY(0) scale(1)}
+.product-dialog::backdrop,.cart-dialog::backdrop{opacity:0;transition:opacity .3s ease,display .3s allow-discrete}
+.product-dialog[open]::backdrop,.cart-dialog[open]::backdrop{opacity:1}
+@starting-style{.product-dialog[open],.cart-dialog[open]{opacity:0;transform:translateY(22px) scale(.965)}.product-dialog[open]::backdrop,.cart-dialog[open]::backdrop{opacity:0}}
+.product-dialog[open] .product-dialog-image>img{animation:product-image-enter .52s cubic-bezier(.2,.75,.25,1) both}
+.product-dialog[open] .pizza-image-badge,.product-dialog[open] .icon-close{animation:product-detail-pop .38s .08s cubic-bezier(.2,.75,.25,1) both}
+@keyframes product-image-enter{from{opacity:.6;transform:scale(1.06)}to{opacity:1;transform:scale(1)}}
+@keyframes product-detail-pop{from{opacity:0;transform:translateY(6px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* Primary hero action */
+.hero-cta .button-red{position:relative;isolation:isolate;overflow:hidden;min-height:60px;padding:17px 28px;border-radius:999px;gap:28px;box-shadow:0 10px 26px rgba(207,22,20,.22);transition:background .25s,transform .25s,box-shadow .25s}
+.hero-cta .button-red:after{content:"";position:absolute;z-index:-1;top:-35%;left:-70%;width:42%;height:170%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.3),transparent);transform:skewX(-22deg);transition:left .7s ease}
+.hero-cta .button-red:hover{background:#e22a20;transform:translateY(-3px) scale(1.025);box-shadow:0 15px 32px rgba(207,22,20,.34)}
+.hero-cta .button-red:hover:after{left:135%}
+.hero-cta .button-red svg{transition:transform .25s}
+.hero-cta .button-red:hover svg{transform:translate(3px,-2px)}
+
+/* Gentle movement and feedback across the page */
+.logo-plate{animation:logo-float 7s ease-in-out infinite;transition:box-shadow .35s}
+.logo-plate:hover{box-shadow:0 42px 100px #0009,0 0 0 12px rgba(255,255,255,.07),0 0 0 15px rgba(255,255,255,.2)}
+.hero-seal{animation:seal-float 5s ease-in-out infinite}
+.menu-card{transition:transform .35s cubic-bezier(.2,.75,.25,1),box-shadow .35s}
+.menu-card-image img{transition:transform .6s cubic-bezier(.2,.75,.25,1)}
+.menu-card:hover .menu-card-image img{transform:scale(1.045)}
+.category-pill{transition:background .22s,border-color .22s,color .22s,transform .22s,box-shadow .22s}
+.category-pill:hover{transform:translateY(-2px);box-shadow:0 7px 16px rgba(11,42,32,.12)}
+.step{transition:padding-left .28s ease,background-color .28s ease}
+.step:hover{padding-left:9px}
+.step b svg{transition:transform .25s}
+.step:hover b svg{transform:translate(3px,-3px)}
+.visit-card{transition:transform .3s ease,box-shadow .3s ease}
+.visit-card:hover{transform:translateY(-5px);box-shadow:18px 21px 0 #dfd1bb}
+.visit-pizza-icon{transform-origin:center;transition:transform .35s ease}
+.visit-card:hover .visit-pizza-icon{transform:rotate(-12deg) scale(1.08)}
+.info-row a,.visit-card-bottom a,.footer-column a{transition:color .2s ease}
+.footer-column a:hover{color:#ff716a}
+
+/* Reveal content as it enters the viewport */
+.reveal{opacity:0;transform:translate3d(0,22px,0);transition:opacity .65s cubic-bezier(.2,.75,.25,1) var(--reveal-delay,0ms),transform .65s cubic-bezier(.2,.75,.25,1) var(--reveal-delay,0ms)}
+.reveal.is-visible{opacity:1;transform:translate3d(0,0,0)}
+.menu-card.reveal{transition-delay:var(--reveal-delay,0ms)}
+@keyframes menu-category-enter{from{opacity:0;transform:translate3d(0,14px,0) scale(.99)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+.menu-grid.category-change{animation:menu-category-enter .36s cubic-bezier(.2,.75,.25,1) both}
+@keyframes logo-float{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(-1.5deg)}}
+@keyframes seal-float{0%,100%{transform:translateY(0) rotate(-11deg)}50%{transform:translateY(-7px) rotate(-7deg)}}
+
+@media(max-width:700px){
+  .hero-cta .button-red{min-height:56px;padding:15px 22px;gap:20px}
+  .reveal{transform:translate3d(0,15px,0)}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}

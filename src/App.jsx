@@ -82,7 +82,7 @@ function Hero() {
   return <section className="hero" id="krye">
     <div className="hero-noise" aria-hidden="true" />
     <div className="shell hero-layout">
-      <div className="hero-copy"><p className="eyebrow"><span className="eyebrow-line" /> PODUJEVË • PIZZA & COFFEE</p><h1>Një kafshatë,<br /><em>edhe një.</em></h1><p className="hero-intro">Hape menynë, zgjidh çka të pëlqen dhe përgatite porosinë për dërgesë ose marrje në lokal. Dërgesa është falas në zonat që i mbulojmë.</p><div className="hero-cta"><a className="button button-red" href="#menu">Shiko menynë <ArrowIcon /></a><a className="text-link" href="#na-gjej">Ku na gjen <ArrowIcon /></a></div><div className={`hero-status ${open ? 'open' : ''}`} role="status" aria-live="polite"><span className="status-dot" /><span>{!ready ? 'Porositë online aktivizohen së shpejti' : open ? 'Hapur për porosi' : 'Lokali është i mbyllur. Hapet çdo ditë nga 10:00 deri në 02:00 të natës.'}</span></div></div>
+      <div className="hero-copy"><p className="eyebrow"><span className="eyebrow-line" /> PODUJEVË • PIZZA & COFFEE</p><h1>Një kafshatë,<br /><em>edhe një.</em></h1><p className="hero-intro"> Picat ma t'mira n'shehër, shije që t'bon me u kthy prapë! Zgjedh të preferuarën tënde dhe porosit lehtë. Dërgesë falas në zonat që mbulojmë ose marrje në lokal!</p><div className="hero-cta"><a className="button button-red" href="#menu">Shiko menynë <ArrowIcon /></a><a className="text-link" href="#na-gjej">Ku na gjen <ArrowIcon /></a></div><div className={`hero-status ${open ? 'open' : ''}`} role="status" aria-live="polite"><span className="status-dot" /><span>{!ready ? 'Porositë online aktivizohen së shpejti' : open ? 'Hapur për porosi' : 'Lokali është i mbyllur. Hapet çdo ditë nga 10:00 deri në 02:00 të natës.'}</span></div></div>
       <div className="hero-visual"><div className="orbit orbit-one" aria-hidden="true" /><div className="orbit orbit-two" aria-hidden="true" /><span className="hero-side-note" aria-hidden="true">ROLLS / PODUJEVË / PIZZA & COFFEE</span><div className="logo-plate"><img src="/assets/rolls-logo.jpg" alt="Logoja zyrtare e Pizza Rolls Coffee" width="960" height="960" /></div><div className="hero-seal" aria-hidden="true"><span>01</span><small>Shije<br />për çdo ditë</small></div></div>
     </div>
     <div className="ticker" aria-hidden="true"><div className="ticker-track">PIZZA <span>✦</span> COFFEE <span>✦</span> PODUJEVË <span>✦</span> ROLLS <span>✦</span> PIZZA <span>✦</span> COFFEE <span>✦</span> PODUJEVË <span>✦</span> ROLLS <span>✦</span></div></div>
@@ -92,6 +92,7 @@ function Hero() {
 function MenuSection({ onChoose }) {
   const firstCategory = menu.categories.find((category) => menu.products.some((product) => product.categoryId === category.id))?.id;
   const [selectedCategory, setSelectedCategory] = useState(firstCategory || 'pizza');
+  const [hasChangedCategory, setHasChangedCategory] = useState(false);
   const menuGridRef = useRef(null);
   const previousCategoryRef = useRef(selectedCategory);
   const products = menu.products.filter((product) => product.available !== false);
@@ -105,8 +106,8 @@ function MenuSection({ onChoose }) {
   return <section className="menu-section section-pad" id="menu"><div className="shell">
     <div className="section-heading"><div><p className="section-kicker">01 / MENYJA</p><h2>Çka të hahet <em>sot?</em></h2></div><p>Çdo produkt veçmas, me përbërës dhe çmime të qarta. Zgjedh madhësinë e pizzës, pastaj dërgo porosinë në WhatsApp.</p></div>
     <a className="source-menu-link" href="/assets/menu-original.png" target="_blank" rel="noreferrer">Shiko menynë origjinale <ArrowIcon /></a>
-    <div className="menu-controls" aria-label="Kategoritë e menysë">{menu.categories.map((category) => { const count = products.filter((product) => product.categoryId === category.id).length; return count > 0 && <button key={category.id} type="button" className={`category-pill ${category.id === selectedCategory ? 'active' : ''}`} aria-pressed={category.id === selectedCategory} onClick={() => setSelectedCategory(category.id)}>{category.name} <span>{count}</span></button>; })}</div>
-    <div className="menu-grid" ref={menuGridRef} aria-live="polite">{visible.map((product, index) => {
+    <div className="menu-controls" aria-label="Kategoritë e menysë">{menu.categories.map((category) => { const count = products.filter((product) => product.categoryId === category.id).length; return count > 0 && <button key={category.id} type="button" className={`category-pill ${category.id === selectedCategory ? 'active' : ''}`} aria-pressed={category.id === selectedCategory} onClick={() => { if (category.id === selectedCategory) return; setHasChangedCategory(true); setSelectedCategory(category.id); }}>{category.name} <span>{count}</span></button>; })}</div>
+    <div key={selectedCategory} className={`menu-grid ${hasChangedCategory ? 'category-change' : ''}`} ref={menuGridRef} aria-live="polite">{visible.map((product, index) => {
       const prices = (product.variants || []).map((variant) => Number(variant.priceCents));
       const from = prices.length ? Math.min(...prices) : Number(product.priceCents || 0);
       const isPizza = product.categoryId === 'pizza';
@@ -130,17 +131,25 @@ function MenuSection({ onChoose }) {
   </div></section>;
 }
 
-function ProductDialog({ product, onClose, onAdd }) {
+function ProductDialog({ product: requestedProduct, onClose, onAdd }) {
   const ref = useRef(null);
+  const [displayProduct, setDisplayProduct] = useState(requestedProduct);
   const [variantId, setVariantId] = useState('');
   const [extraIds, setExtraIds] = useState([]);
   const [instructions, setInstructions] = useState('');
   const [quantity, setQuantity] = useState(1);
   useEffect(() => {
-    if (!product) return;
-    setVariantId(product.variants?.[0]?.id || ''); setExtraIds([]); setInstructions(''); setQuantity(1);
+    if (!requestedProduct) {
+      if (ref.current?.open) ref.current.close();
+      if (!displayProduct) return;
+      const timeout = window.setTimeout(() => setDisplayProduct(null), 420);
+      return () => window.clearTimeout(timeout);
+    }
+    setDisplayProduct(requestedProduct);
+    setVariantId(requestedProduct.variants?.[0]?.id || ''); setExtraIds([]); setInstructions(''); setQuantity(1);
     if (!ref.current.open) ref.current.showModal();
-  }, [product]);
+  }, [requestedProduct]);
+  const product = requestedProduct || displayProduct;
   if (!product) return null;
   const variant = product.variants?.find((item) => item.id === variantId);
   const extrasPrice = (product.extras || []).filter((item) => extraIds.includes(item.id)).reduce((sum, item) => sum + Number(item.priceCents || 0), 0);
@@ -171,15 +180,27 @@ function ProductDialog({ product, onClose, onAdd }) {
 
 function CartDialog({ open, cart, onClose, onChangeCart }) {
   const ref = useRef(null);
+  const cartRef = useRef(cart);
+  cartRef.current = cart;
   const [method, setMethod] = useState('delivery');
   const [form, setForm] = useState({ zoneId: '', name: '', phone: '', address: '', notes: '' });
   const [error, setError] = useState('');
+  const [removingLines, setRemovingLines] = useState(() => new Set());
   const lines = useMemo(() => cartDetails(cart, menu), [cart]);
   const totals = useMemo(() => calculateTotals(cart, menu, method, form.zoneId, business.deliveryZones), [cart, method, form.zoneId]);
   useEffect(() => { if (open && !ref.current.open) ref.current.showModal(); if (!open && ref.current?.open) ref.current.close(); }, [open]);
   const update = (index, quantity) => {
     const next = cart.map((item, itemIndex) => itemIndex === index ? { ...item, quantity } : item);
     onChangeCart(normalizeCart(quantity <= 0 ? next.filter((_, itemIndex) => itemIndex !== index) : next, menu));
+  };
+  const removeLine = (line) => {
+    const lineKey = JSON.stringify([line.productId, line.variantId, line.extraIds, line.instructions]);
+    setRemovingLines((current) => new Set(current).add(lineKey));
+    window.setTimeout(() => {
+      const next = cartRef.current.filter((item) => JSON.stringify([item.productId, item.variantId, item.extraIds, item.instructions]) !== lineKey);
+      onChangeCart(normalizeCart(next, menu));
+      setRemovingLines((current) => { const nextKeys = new Set(current); nextKeys.delete(lineKey); return nextKeys; });
+    }, 320);
   };
   const submit = (event) => {
     event.preventDefault();
@@ -191,18 +212,18 @@ function CartDialog({ open, cart, onClose, onChangeCart }) {
   const orderOpen = canOrder(business, menu);
   return <dialog className="cart-dialog" ref={ref} onClose={onClose}><div className="cart-panel">
     <div className="dialog-head"><div><p className="section-kicker">POROSIA JOTE</p><h2>Shporta</h2></div><button type="button" className="icon-close" aria-label="Mbyll shportën" onClick={() => ref.current.close()}>×</button></div>
-    <div className="cart-scroll">{!lines.length ? <div className="cart-empty">Shporta është e zbrazët. Zgjedh produktet nga menuja dhe kthehu këtu kur të jesh gati.</div> : lines.map((line, index) => { const product = menu.products.find((item) => item.id === line.productId); const isPizza = product?.categoryId === 'pizza'; const hasDrinkImage = product?.categoryId === 'drinks' && Boolean(drinkImageFiles[product.id]); const hasSauceImage = product?.categoryId === 'sauces' && Boolean(sauceImageFiles[product.id]); const hasSandwichImage = product?.categoryId === 'sandwich' && Boolean(sandwichImageFiles[product.id]); const hasImage = isPizza || hasDrinkImage || hasSauceImage || hasSandwichImage; const imageSrc = isPizza ? pizzaImagePath(line.productId) : hasDrinkImage ? drinkImagePath(line.productId) : hasSauceImage ? sauceImagePath(line.productId) : sandwichImagePath(line.productId); const imageAlt = isPizza ? `Pizza ${product.name}` : hasDrinkImage ? `Pije ${product.name}` : hasSandwichImage ? `Sanduiç ${product.name}` : product.name; return <div className="cart-line" key={`${line.productId}-${line.variantId}-${line.instructions}-${index}`}>
+    <div className="cart-scroll">{!lines.length ? <div className="cart-empty"><span className="cart-empty-icon" aria-hidden="true">✦</span><h3>Shporta është bosh</h3><p>Gjej diçka të shijshme në menu dhe shtoje këtu.</p><button className="button button-red cart-empty-action" type="button" onClick={() => { ref.current.close(); window.setTimeout(() => document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 380); }}>Zgjedh të preferuarën <ArrowIcon /></button></div> : lines.map((line, index) => { const lineKey = JSON.stringify([line.productId, line.variantId, line.extraIds, line.instructions]); const isRemoving = removingLines.has(lineKey); const product = menu.products.find((item) => item.id === line.productId); const isPizza = product?.categoryId === 'pizza'; const hasDrinkImage = product?.categoryId === 'drinks' && Boolean(drinkImageFiles[product.id]); const hasSauceImage = product?.categoryId === 'sauces' && Boolean(sauceImageFiles[product.id]); const hasSandwichImage = product?.categoryId === 'sandwich' && Boolean(sandwichImageFiles[product.id]); const hasImage = isPizza || hasDrinkImage || hasSauceImage || hasSandwichImage; const imageSrc = isPizza ? pizzaImagePath(line.productId) : hasDrinkImage ? drinkImagePath(line.productId) : hasSauceImage ? sauceImagePath(line.productId) : sandwichImagePath(line.productId); const imageAlt = isPizza ? `Pizza ${product.name}` : hasDrinkImage ? `Pije ${product.name}` : hasSandwichImage ? `Sanduiç ${product.name}` : product.name; return <div className={`cart-line ${isRemoving ? 'is-removing' : ''}`} key={lineKey}>
         <div className="cart-line-product">{hasImage && <span className={`cart-line-image-wrap ${hasDrinkImage ? 'cart-line-image-wrap-drink' : ''} ${hasSauceImage ? 'cart-line-image-wrap-sauce' : ''} ${hasSandwichImage ? 'cart-line-image-wrap-sandwich' : ''}`}><img className="cart-line-image" src={imageSrc} alt={imageAlt} onError={(event) => { event.currentTarget.style.display = 'none'; event.currentTarget.nextElementSibling.hidden = false; }} /><span className="cart-line-image-fallback" hidden aria-hidden="true">{isPizza ? '🍕' : hasDrinkImage ? '🥤' : hasSandwichImage ? '🥪' : '🥣'}</span></span>}<div><h3>{line.name}</h3><small>{[line.variantName, ...line.extraNames, ...line.includedItems.map((item) => `${item.quantity} × ${item.name} falas`), line.instructions].filter(Boolean).join(', ')}</small><strong>{formatPrice(line.totalPriceCents)}</strong></div></div>
-        <div className="cart-line-actions"><button type="button" aria-label="Ule sasinë" onClick={() => update(index, line.quantity - 1)}>−</button><span>{line.quantity}</span><button type="button" aria-label="Rrite sasinë" onClick={() => update(index, Math.min(20, line.quantity + 1))}>+</button><button type="button" className="remove-line" onClick={() => update(index, 0)}>Hiqe</button></div>
+        <div className="cart-line-actions"><button type="button" aria-label="Ule sasinë" disabled={isRemoving} onClick={() => line.quantity === 1 ? removeLine(line) : update(index, line.quantity - 1)}>−</button><span>{line.quantity}</span><button type="button" aria-label="Rrite sasinë" disabled={isRemoving} onClick={() => update(index, Math.min(20, line.quantity + 1))}>+</button><button type="button" className="remove-line" disabled={isRemoving} onClick={() => removeLine(line)}>Hiqe</button></div>
       </div>; })}
-      <form id="checkoutForm" noValidate onSubmit={submit}><fieldset className="method-fieldset"><legend>Si dëshiron ta marrësh?</legend><label><input type="radio" name="method" value="delivery" checked={method === 'delivery'} onChange={() => setMethod('delivery')} /><span>Dërgesë</span></label><label><input type="radio" name="method" value="pickup" checked={method === 'pickup'} onChange={() => setMethod('pickup')} /><span>Marrje në lokal</span></label></fieldset>
+      {lines.length > 0 && <form id="checkoutForm" noValidate onSubmit={submit}><fieldset className="method-fieldset"><legend>Si dëshiron ta marrësh?</legend><label><input type="radio" name="method" value="delivery" checked={method === 'delivery'} onChange={() => setMethod('delivery')} /><span>Dërgesë</span></label><label><input type="radio" name="method" value="pickup" checked={method === 'pickup'} onChange={() => setMethod('pickup')} /><span>Marrje në lokal</span></label></fieldset>
       {method === 'delivery' && <div>{business.deliveryZones.length > 0 && <div><label htmlFor="zone">Zona e dërgesës</label><select id="zone" value={form.zoneId} onChange={(event) => setForm({ ...form, zoneId: event.target.value })}><option value="">Zgjedh zonën</option>{business.deliveryZones.map((zone) => <option value={zone.id} key={zone.id}>{zone.name} — {zone.feeCents === 0 ? 'Falas' : formatPrice(zone.feeCents)}</option>)}</select></div>}<label htmlFor="address">Adresa e plotë</label><input id="address" autoComplete="street-address" placeholder="Rruga, numri, fshati ose lagjja, pika orientuese" value={form.address} onChange={(event) => setForm({ ...form, address: event.target.value })} required /><p className="delivery-coverage">Dërgesa është falas. Stafi e konfirmon mbulimin e adresës në WhatsApp.</p></div>}
         <div className="field-pair"><div><label htmlFor="customerName">Emri dhe mbiemri</label><input id="customerName" autoComplete="name" placeholder="Shkruaj emrin dhe mbiemrin" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required /></div><div><label htmlFor="customerPhone">Telefoni</label><input id="customerPhone" autoComplete="tel" inputMode="tel" placeholder="+383 4X XXX XXX" value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} required /></div></div>
         <p className="checkout-accuracy-note" role="note"><span aria-hidden="true">!</span><span><strong>Të dhënat duhet të jenë të sakta.</strong> Shëno emrin dhe mbiemrin, numrin e telefonit{method === 'delivery' ? ' dhe adresën e plotë të dërgesës' : ''}. Pa këto të dhëna, stafi nuk mund ta konfirmojë porosinë.</span></p>
         <label htmlFor="notes">Shënime për porosinë <span className="optional">(opsionale)</span></label><textarea id="notes" rows="2" placeholder="P.sh. 1/4 Macho, ose gjysma e Shtëpisë e gjysma Peshk" value={form.notes} onChange={(event) => setForm({ ...form, notes: event.target.value })} />
         <div className="totals"><div><span>Nëntotali</span><strong>{formatPrice(totals.subtotalCents)}</strong></div>{method === 'delivery' && <div><span>Dërgesa</span><strong>{totals.validZone ? (totals.deliveryCents === 0 ? 'Falas' : formatPrice(totals.deliveryCents)) : 'Zgjedh zonën'}</strong></div>}<div className="grand-total"><span>Totali</span><strong>{formatPrice(totals.totalCents)}</strong></div></div>
         <p className="payment-note">Pagesa bëhet në dorëzim ose marrje. Dërgimi në WhatsApp nuk e konfirmon automatikisht porosinë.</p>{error && <p className="form-error" role="alert">{error}</p>}<button className="button button-red send-order" type="submit" disabled={!orderOpen || !lines.length}>{orderOpen ? 'Dërgo porosinë në WhatsApp' : 'Mbyllur — hapet në 10:00'} <ArrowIcon /></button><p className="send-hint">Në WhatsApp shtyp “Dërgo” dhe prit konfirmimin nga stafi.</p>
-      </form>
+      </form>}
     </div>
   </div></dialog>;
 }
@@ -243,6 +264,41 @@ export default function App() {
   const [toast, setToast] = useState('');
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
   const total = calculateTotals(cart, menu, 'pickup', '', business.deliveryZones).totalCents;
+  useEffect(() => {
+    const selector = '.hero-copy, .hero-visual, .section-heading, .menu-card, .empty-menu, .process-lead, .step, .visit-copy, .visit-card, .footer-brand-block, .footer-column';
+    const observed = new Set();
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const observer = !reduceMotion && 'IntersectionObserver' in window
+      ? new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -5% 0px' })
+      : null;
+    const register = (element) => {
+      if (!(element instanceof Element) || !element.matches(selector) || observed.has(element)) return;
+      observed.add(element);
+      element.classList.add('reveal');
+      element.style.setProperty('--reveal-delay', `${Math.min((observed.size - 1) % 5, 4) * 70}ms`);
+      if (observer) observer.observe(element);
+      else element.classList.add('is-visible');
+    };
+    const scan = (node) => {
+      register(node);
+      node.querySelectorAll?.(selector).forEach(register);
+    };
+    scan(document);
+    const mutations = new MutationObserver((records) => {
+      records.forEach((record) => record.addedNodes.forEach(scan));
+    });
+    mutations.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      mutations.disconnect();
+      observer?.disconnect();
+    };
+  }, []);
   useEffect(() => { try { localStorage.setItem('rolls-cart-v1', JSON.stringify(cart)); } catch {} }, [cart]);
   useEffect(() => { if (!toast) return undefined; const timer = setTimeout(() => setToast(''), 3500); return () => clearTimeout(timer); }, [toast]);
   const add = (item) => { const product = menu.products.find((entry) => entry.id === item.productId); setCart((current) => normalizeCart([...current, item], menu)); setToast(`${product.name} u shtua në shportë. Vazhdo me menynë ose hape shportën kur të jesh gati.`); };
