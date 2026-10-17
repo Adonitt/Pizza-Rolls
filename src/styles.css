@@ -18,7 +18,7 @@
 @media(max-width:700px){.map-embed{height:230px;margin:25px 12px 0 0}}
 .info-row .location-map-button{display:inline-flex;align-items:center;gap:7px;width:fit-content;color:var(--ink);font:400 19px/1.4 Georgia,'Times New Roman',serif;text-decoration:none;transition:color .2s}.info-row a.location-map-button:hover{color:var(--red);text-decoration:underline;text-underline-offset:4px}
 .location-row .location-map-button{white-space:nowrap}
-.card-top .visit-star{display:block;width:24px;height:24px;flex:0 0 24px;fill:currentColor;stroke:none}
+.card-top .visit-pizza-icon{display:block;width:29px;height:29px;flex:0 0 29px;fill:var(--red);stroke:none}.card-top .visit-pizza-icon .pizza-crust{fill:none;stroke:var(--pine);stroke-width:2.2;stroke-linecap:round}.card-top .visit-pizza-icon circle{fill:var(--cream);stroke:var(--pine);stroke-width:.7}
 @media(max-width:700px){.info-row .location-map-button{font-size:17px}}
 @media(max-width:700px){.cart-toast{bottom:77px}}
 @media(max-width:700px){.process-section:after{width:340px;right:-100px;bottom:-35px;opacity:.11}}
