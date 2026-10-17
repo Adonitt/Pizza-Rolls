@@ -104,6 +104,16 @@ test('cart and WhatsApp label products clearly by category', () => {
   assert.doesNotMatch(message, /Adresa:|Dërgesa:|Nëntotali/);
 });
 
+test('60 cm pizzas include one free 1.5 L Coca-Cola per pizza in cart and WhatsApp', () => {
+  const cart = normalizeCart([{ productId: 'margarita', variantId: '60', quantity: 2 }], menu);
+  const lines = calculateTotals(cart, menu, 'pickup', '', []).lines;
+  assert.deepEqual(lines[0].includedItems, [{ name: 'Coca-Cola 1.5 L', quantity: 2 }]);
+  const message = buildWhatsAppMessage({ cart, menu, business, method: 'pickup', zoneId: '', name: 'Arta', phone: '049 123 456', address: '', notes: '' });
+  assert.match(message, /2 × Pizza Margarita \(60 cm\) — 34,00 €\n  \+ 2 × Coca-Cola 1\.5 L — FALAS \(me picën 60 cm\)/);
+  const smallerPizza = normalizeCart([{ productId: 'margarita', variantId: '40', quantity: 1 }], menu);
+  assert.deepEqual(calculateTotals(smallerPizza, menu, 'pickup', '', []).lines[0].includedItems, []);
+});
+
 test('delivery without configured zones stays free and is confirmed by staff', () => {
   const cart = normalizeCart([{ productId: 'margarita', variantId: '30', quantity: 1 }], menu);
   const noZonesBusiness = { ...business, deliveryZones: [] };

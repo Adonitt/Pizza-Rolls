@@ -56,6 +56,9 @@ export function cartDetails(cart, menu) {
       name: orderProductName(product),
       variantName: variant?.name || '',
       extraNames: extras.map((extra) => extra.name),
+      includedItems: product.categoryId === 'pizza' && variant?.id === '60'
+        ? [{ name: 'Coca-Cola 1.5 L', quantity: item.quantity }]
+        : [],
       unitPriceCents,
       totalPriceCents: unitPriceCents * item.quantity
     };
@@ -147,9 +150,11 @@ export function buildWhatsAppMessage({ cart, menu, business, method, zoneId, nam
     `PËRSHËNDETJE ${restaurantName.toLocaleUpperCase('sq')}! Dua të bëj këtë porosi:`,
     '',
     'POROSIA',
-    ...totals.lines.map((line) => {
+    ...totals.lines.flatMap((line) => {
       const choices = [line.variantName, ...line.extraNames, line.instructions].filter(Boolean).join(', ');
-      return `• ${line.quantity} × ${line.name}${choices ? ` (${choices})` : ''} — ${formatPrice(line.totalPriceCents)}`;
+      const orderRow = `• ${line.quantity} × ${line.name}${choices ? ` (${choices})` : ''} — ${formatPrice(line.totalPriceCents)}`;
+      const includedRows = line.includedItems.map((item) => `  + ${item.quantity} × ${item.name} — FALAS (me picën 60 cm)`);
+      return [orderRow, ...includedRows];
     }),
     '',
     'MËNYRA E MARRJES',
